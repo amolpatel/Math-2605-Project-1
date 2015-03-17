@@ -1,3 +1,5 @@
+import java.util.Arrays;
+
 /**
  * Matrix class can be used to represent a matrix or vector as
  * a two dimensional array and supports various operations
@@ -83,6 +85,64 @@ public class Matrix {
 			for (int j = 0; j < numCols; j++)
 				result[j][i] = matrix[i][j];
 		return (new Matrix(result));
+	}
+
+	/**
+	 * Performs LU decomposition of matrix
+	 * Worked out examples of how to calculate LU decomposition are at the following link
+	 * https://files.t-square.gatech.edu/access/content/group/gtc-1e04-e0d7-51e4-a454-b328339e73da/examples_LU_Householder.pdf
+	 * @return matrices l and u in array
+	 */
+	public Matrix[] lu_fact() {
+		// Can LU factorization happen on non-square matrices? Account for this at some point.
+		double[][] l = getIdentityArray(numRows);
+		// Copy original matrix into u for row reduction
+		double[][] u = new double[numRows][numCols];
+		for (int i = 0; i < numRows; i++)
+			u[i] = Arrays.copyOf(matrix[i], numCols);
+
+		for (int j = 0; j < numCols - 1; j++)
+			for (int i = j + 1; i < numRows; i++)
+				if (u[i][j] != 0)
+				{
+					double scalar = u[i][j]/u[j][j];
+					// Putting scalar in l because this is equivalent to the inverse of the matrix G_n at each step
+					l[i][j] = scalar;
+					u = rowOperation(u, j, i, scalar);
+				}
+		Matrix[] list = new Matrix[2];
+		list[0] = new Matrix(l);
+		list[1] = new Matrix(u);
+		return list;
+	}
+
+	/**
+	 * Performs row operation on array based on parameters
+	 * @param array array on which row operation is being performed
+	 * @param pivot pivot row of array
+	 * @param row row whose values are being changed
+	 * @param scalar number to multiply the pivot row by and add to specificed row
+	 * @return result of row operation
+	 */
+	private static double[][] rowOperation(double[][] array, int pivot, int row, double scalar) {
+		for (int j = 0; j < array[0].length; j++)
+			array[row][j] += (array[pivot][j] * scalar * -1);
+		return array;
+	}
+
+	/**
+	 * An identity matrix is defined as a matrix with n rows and columns with a diagonal of 1s
+	 * Method returns a two dimensional representation of the array
+	 * @param dim dimensions of array
+	 * @return identity array
+	 */
+	public double[][] getIdentityArray(int dim) {
+		double[][] array = new double[dim][dim];
+		for (int i = 0; i < dim; i++)
+			for (int j = 0; j < dim; j++)
+				if (i == j)
+					array[i][j] = 1;
+		return array;
 	}
 
 	/**
