@@ -86,7 +86,7 @@ public class Matrix {
 	}
 
     /**
-     * @return diagonals of matrix
+     * @return diagonal of matrix
      */
     public Matrix diagonalize(){
         double[][] result = new double[numRows][numCols];
@@ -97,7 +97,19 @@ public class Matrix {
             result[i][i] = matrix[i][i];
         }
         return (new Matrix(result));
+    }
 
+    /**
+     * @return absolute value of matrix
+     */
+    public Matrix absoluteValue(){
+        double[][] result = new double[numRows][numCols];
+        for(int i = 0; i < numRows; i++){
+            for(int j = 0; j < numCols; j++){
+                result[i][j] = Math.abs(matrix[i][j]);
+            }
+        }
+        return (new Matrix(result));
     }
 
 	/**

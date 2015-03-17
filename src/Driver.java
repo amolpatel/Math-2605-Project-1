@@ -19,5 +19,6 @@ public class Driver {
 		System.out.println("Matrix transposed: \n" + matrix.transpose());
 		// Dot product just calls multiply method, so not bothering to test it
         System.out.println("Matrix diagonalized: \n" + matrix.diagonalize());
+        System.out.println("Matrix absolute value: \n" + matrix.absoluteValue());
     }
 }
