@@ -18,5 +18,6 @@ public class Driver {
 		System.out.println("Matrix multiplied by itself: \n" + matrix.multiply(matrix));
 		System.out.println("Matrix transposed: \n" + matrix.transpose());
 		// Dot product just calls multiply method, so not bothering to test it
-	}
+        System.out.println("Matrix diagonalized: \n" + matrix.diagonalize());
+    }
 }
