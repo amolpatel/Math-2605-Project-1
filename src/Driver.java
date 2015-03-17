@@ -30,5 +30,8 @@ public class Driver {
 		System.out.println("To ensure that the LU decomposition is correct, L and U should "
 				+ "multiply together to form the original matrix. Result of L * U is below.");
 		System.out.println(list[0].multiply(list[1]));
+
+        System.out.println("Matrix diagonalized: \n" + matrix.diagonalize());
+        System.out.println("Matrix absolute value: \n" + matrix.absoluteValue());
 	}
 }
