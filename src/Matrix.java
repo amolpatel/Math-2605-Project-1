@@ -7,10 +7,10 @@ public class Matrix {
 	private final int numRows;
 	private final int numCols;
 
-	public Matrix(int dim) {
-		matrix = new double[dim][dim];
-		numRows = dim;
-		numCols = dim;
+	public Matrix(int rows, int cols) {
+		matrix = new double[rows][cols];
+		numRows = rows;
+		numCols = cols;
 	}
 
 	public Matrix(double[][] array) {
@@ -26,7 +26,7 @@ public class Matrix {
 		if (!haveEqualDimensions(m))
 			throw new IllegalArgumentException("Matrices cannot be added.");
 
-		Matrix result = new Matrix(numRows);
+		Matrix result = new Matrix(numRows, numCols);
 		for (int i = 0; i < numRows; i++)
 			for (int j = 0; j < numCols; j++)
 				result.matrix[i][j] = this.matrix[i][j] + m.matrix[i][j];
@@ -40,7 +40,7 @@ public class Matrix {
 		if (!haveEqualDimensions(m))
 			throw new IllegalArgumentException("Matrices cannot be subtracted.");
 
-		Matrix result = new Matrix(numRows);
+		Matrix result = new Matrix(numRows, numCols);
 		for (int i = 0; i < numRows; i++)
 			for (int j = 0; j < numCols; j++)
 				result.matrix[i][j] = this.matrix[i][j] - m.matrix[i][j];
@@ -55,7 +55,7 @@ public class Matrix {
 		if (!checkDims(m))
 			throw new IllegalArgumentException("Matrices cannot be multiplied.");
 
-		Matrix result = new Matrix(numRows);
+		Matrix result = new Matrix(numRows, numCols);
 		for (int i = 0; i < numRows; i++)
 			for (int j = 0; j < m.numCols; j++)
 				for (int k = 0; k < numCols; k++)
@@ -68,7 +68,7 @@ public class Matrix {
 	 * @return matrix result of scalar times matrix
 	 */
 	public Matrix multiply(double scalar) {
-		Matrix result = new Matrix(numRows);
+		Matrix result = new Matrix(numRows, numCols);
 		for (int i = 0; i < numRows; i++)
 			for (int j = 0; j < numCols; j++)
 				result.matrix[i][j] = matrix[i][j] * scalar;
@@ -84,7 +84,7 @@ public class Matrix {
 	 * @return transpose of matrix
 	 */
 	public Matrix transpose() {
-		Matrix result = new Matrix(numRows);
+		Matrix result = new Matrix(numRows, numCols);
 		for (int i = 0; i < numRows; i++)
 			for (int j = 0; j < numCols; j++)
 				result.matrix[j][i] = matrix[i][j];
@@ -95,7 +95,7 @@ public class Matrix {
      * @return diagonal of matrix
      */
     public Matrix diagonalize(){
-		Matrix result = new Matrix(numRows);
+		Matrix result = new Matrix(numRows, numCols);
         for(int i = 0; i < numRows; i++)
 			result.matrix[i][i] = matrix[i][i];
         return result;
@@ -105,7 +105,7 @@ public class Matrix {
      * @return matrix containing absolute values of each entry in original matrix
      */
     public Matrix absoluteValue() {
-		Matrix result = new Matrix(numRows);
+		Matrix result = new Matrix(numRows, numCols);
         for(int i = 0; i < numRows; i++)
 			for(int j = 0; j < numCols; j++)
 				result.matrix[i][j] = Math.abs(matrix[i][j]);
@@ -122,7 +122,7 @@ public class Matrix {
 		// Can LU factorization happen on non-square matrices? Account for this at some point.
 		Matrix l = getIdentityMatrix(numRows);
 		// Copy original matrix into u for row reduction and to avoid changing original matrix
-		Matrix u = new Matrix(numRows);
+		Matrix u = new Matrix(numRows, numCols);
 		for (int i = 0; i < numRows; i++)
 			System.arraycopy(matrix[i], 0, u.matrix[i], 0, numCols);
 
@@ -139,6 +139,54 @@ public class Matrix {
 		list[0] = l;
 		list[1] = u;
 		return list;
+	}
+
+	/**
+	 * Solves Ax = b where A = LU
+	 * @param b matrix used when solving for x
+	 * @return matrix solution of system
+	 */
+	public Matrix solve_lu_b(Matrix b) {
+		Matrix[] list = this.lu_fact();
+		// Solve Ly = b using forward substitution since L is an lower triangular matrix
+		Matrix y = forwardSubstitution(list[0], b);
+		// Solve Ux = y using backwards substitution since U is a upper triangular matrix
+		Matrix x = backwardSubstitution(list[1], y);
+		return x;
+	}
+
+	/**
+	 * Solves equation Ax = b
+	 * @param a upper triangular, n by n matrix
+	 * @param b n by 1 vector
+	 * @return matrix solution of system
+	 */
+	private Matrix forwardSubstitution(Matrix a, Matrix b) {
+		Matrix x = new Matrix(a.numCols, 1);
+		double total;
+		for (int i = 0; i < a.numCols; i++)
+		{
+			total = 0;
+			for (int j = 0; j < i; j++)
+				total += a.matrix[i][j] * x.matrix[j][0];
+			double x_n = (b.matrix[i][0] - total) / a.matrix[i][i];
+			x.matrix[i][0] = x_n;
+		}
+		return x;
+	}
+
+	private Matrix backwardSubstitution(Matrix a, Matrix b) {
+		Matrix x = new Matrix(a.numCols, 1);
+		double total;
+		for (int i = a.numCols - 1; i >= 0; i--)
+		{
+			total = 0;
+			for (int j = a.numCols - 1; j > i; j--)
+				total += a.matrix[i][j] * x.matrix[j][0];
+			double x_n = (b.matrix[i][0] - total) / a.matrix[i][i];
+			x.matrix[i][0] = x_n;
+		}
+		return x;
 	}
 
 	/**
@@ -188,7 +236,7 @@ public class Matrix {
 	 * @return Hilbert matrix represented a 2D array
 	 */
 	public static Matrix getHilbertMatrix(int dim) {
-		Matrix hilbert = new Matrix(dim);
+		Matrix hilbert = new Matrix(dim, dim);
 		for (int i = 0; i < dim; i++)
 			for (int j = 0; j < dim; j++)
 				// Simply adding 1 since arrays are 0 indexed
@@ -203,7 +251,7 @@ public class Matrix {
 	 * @return identity array
 	 */
 	public static Matrix getIdentityMatrix(int dim) {
-		Matrix identity = new Matrix(dim);
+		Matrix identity = new Matrix(dim, dim);
 		for (int i = 0; i < dim; i++)
 			identity.matrix[i][i] = 1;
 		return identity;
