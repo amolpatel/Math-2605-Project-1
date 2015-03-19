@@ -1,5 +1,3 @@
-
-
 /**
  * Matrix class can be used to represent a matrix or vector as
  * a two dimensional array and supports various operations
@@ -8,6 +6,12 @@ public class Matrix {
 	private double[][] matrix;
 	private final int numRows;
 	private final int numCols;
+
+	public Matrix(int dim) {
+		matrix = new double[dim][dim];
+		numRows = dim;
+		numCols = dim;
+	}
 
 	public Matrix(double[][] array) {
 		this.matrix = array;
@@ -19,28 +23,28 @@ public class Matrix {
 	 * @return matrix result of adding two matrices together
 	 */
 	public Matrix add(Matrix m) {
-		if (!haveEqualDimensions(m.matrix))
+		if (!haveEqualDimensions(m))
 			throw new IllegalArgumentException("Matrices cannot be added.");
 
-		double[][] result = new double[numRows][numCols];
+		Matrix result = new Matrix(numRows);
 		for (int i = 0; i < numRows; i++)
 			for (int j = 0; j < numCols; j++)
-				result[i][j] = this.matrix[i][j] + m.matrix[i][j];
-		return (new Matrix(result));
+				result.matrix[i][j] = this.matrix[i][j] + m.matrix[i][j];
+		return result;
 	}
 
 	/**
 	 * @return matrix result of subtracting two matrices
 	 */
 	public Matrix subtract(Matrix m) {
-		if (!haveEqualDimensions(m.matrix))
+		if (!haveEqualDimensions(m))
 			throw new IllegalArgumentException("Matrices cannot be subtracted.");
 
-		double[][] result = new double[numRows][numCols];
+		Matrix result = new Matrix(numRows);
 		for (int i = 0; i < numRows; i++)
 			for (int j = 0; j < numCols; j++)
-				result[i][j] = this.matrix[i][j] - m.matrix[i][j];
-		return (new Matrix(result));
+				result.matrix[i][j] = this.matrix[i][j] - m.matrix[i][j];
+		return result;
 	}
 
 	/**
@@ -48,15 +52,15 @@ public class Matrix {
 	 * @return matrix result of multiplying two matrices
 	 */
 	public Matrix multiply(Matrix m) {
-		if (!checkDims(m.matrix))
+		if (!checkDims(m))
 			throw new IllegalArgumentException("Matrices cannot be multiplied.");
 
-		double[][] result = new double[numRows][m.numCols];
+		Matrix result = new Matrix(numRows);
 		for (int i = 0; i < numRows; i++)
 			for (int j = 0; j < m.numCols; j++)
 				for (int k = 0; k < numCols; k++)
-					result[i][j] += matrix[i][k] * m.matrix[k][j];
-		return (new Matrix(result));
+					result.matrix[i][j] += matrix[i][k] * m.matrix[k][j];
+		return result;
 	}
 
 	/**
@@ -64,11 +68,11 @@ public class Matrix {
 	 * @return matrix result of scalar times matrix
 	 */
 	public Matrix multiply(double scalar) {
-		double[][] result = new double[numRows][numCols];
+		Matrix result = new Matrix(numRows);
 		for (int i = 0; i < numRows; i++)
 			for (int j = 0; j < numCols; j++)
-				result[i][j] = matrix[i][j] * scalar;
-		return (new Matrix(result));
+				result.matrix[i][j] = matrix[i][j] * scalar;
+		return result;
 	}
 
 	/**
@@ -80,36 +84,32 @@ public class Matrix {
 	 * @return transpose of matrix
 	 */
 	public Matrix transpose() {
-		double[][] result = new double[numCols][numRows];
+		Matrix result = new Matrix(numRows);
 		for (int i = 0; i < numRows; i++)
 			for (int j = 0; j < numCols; j++)
-				result[j][i] = matrix[i][j];
-		return (new Matrix(result));
+				result.matrix[j][i] = matrix[i][j];
+		return result;
 	}
 
     /**
      * @return diagonal of matrix
      */
     public Matrix diagonalize(){
-        double[][] result = new double[numRows][numCols];
-        for(int i = 0; i < numRows; i++){
-            for(int j = 0; j < numCols; j++)
-				result[i][j] = 0;
-            result[i][i] = matrix[i][i];
-        }
-        return (new Matrix(result));
+		Matrix result = new Matrix(numRows);
+        for(int i = 0; i < numRows; i++)
+			result.matrix[i][i] = matrix[i][i];
+        return result;
     }
 
     /**
-     * @return absolute value of matrix
+     * @return matrix containing absolute values of each entry in original matrix
      */
-    public Matrix absoluteValue(){
-        double[][] result = new double[numRows][numCols];
+    public Matrix absoluteValue() {
+		Matrix result = new Matrix(numRows);
         for(int i = 0; i < numRows; i++)
 			for(int j = 0; j < numCols; j++)
-				result[i][j] = Math.abs(matrix[i][j]);
-        return (new Matrix(result));
-
+				result.matrix[i][j] = Math.abs(matrix[i][j]);
+        return result;
     }
 
 	/**
@@ -120,29 +120,29 @@ public class Matrix {
 	 */
 	public Matrix[] lu_fact() {
 		// Can LU factorization happen on non-square matrices? Account for this at some point.
-		double[][] l = getIdentityArray(numRows);
+		Matrix l = getIdentityMatrix(numRows);
 		// Copy original matrix into u for row reduction and to avoid changing original matrix
-		double[][] u = new double[numRows][numCols];
+		Matrix u = new Matrix(numRows);
 		for (int i = 0; i < numRows; i++)
-			System.arraycopy(matrix[i], 0, u[i], 0, numCols);
+			System.arraycopy(matrix[i], 0, u.matrix[i], 0, numCols);
 
 		for (int j = 0; j < numCols - 1; j++)
 			for (int i = j + 1; i < numRows; i++)
-				if (u[i][j] != 0)
+				if (u.matrix[i][j] != 0)
 				{
-					double scalar = u[i][j]/u[j][j];
+					double scalar = u.matrix[i][j]/u.matrix[j][j];
 					// Putting scalar in l because this is equivalent to the inverse of the matrix G_n at each step
-					l[i][j] = scalar;
-					u = rowOperation(u, j, i, scalar);
+					l.matrix[i][j] = scalar;
+					u.rowOperation(j, i, scalar);
 				}
 		Matrix[] list = new Matrix[2];
-		list[0] = new Matrix(l);
-		list[1] = new Matrix(u);
+		list[0] = l;
+		list[1] = u;
 		return list;
 	}
 
 	/**
-	 * Performs a QR factorization of matrix using Givens Rotations where
+	 * Performs a QR factorization of a square matrix using Givens Rotations where
 	 * Q = (G_1)^t * (G_2)^t * (G_m)^t where ^t indicates a transpose of a matrix
 	 * R = G_m * ... * G_2 * G_1 * A
 	 * Worked out example of how to perform this calculation is on page 9 of the following link
@@ -150,8 +150,9 @@ public class Matrix {
 	 * @return matrices Q and R
 	 */
 	public Matrix[] qr_fact_givens() {
-		// Copy original matrix into r for row reduction and to avoid changing original matrix
+		// Can QR factorization using Givens be done on non-square matrices?
 		Matrix q = null;
+		// Copy original matrix into r for row reduction and to avoid changing original matrix
 		Matrix r = new Matrix(matrix);
 		for (int j = 0; j < numCols; j++)
 			for (int i = j + 1; i < numRows; i++)
@@ -163,13 +164,13 @@ public class Matrix {
 					double cosTheta = x / (Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2)));
 					// sin theta = -y/sqrt(x^2 + y^2)
 					double sinTheta = -y / (Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2)));
-					Matrix g = new Matrix(getIdentityArray(numRows));
+					Matrix g = getIdentityMatrix(numRows);
 					g.matrix[i][i] = cosTheta;
 					g.matrix[j][j] = cosTheta;
 					g.matrix[i][j] = sinTheta;
 					g.matrix[j][i] = -sinTheta;
 					r = g.multiply(r);
-					// Sets q equal to G_1 the first time the loop runs, otherwise calculates q as it should
+					// Sets q equal to "G_1" the first time the loop runs, otherwise calculates q as it should
 					if (q == null)
 						q = g.transpose();
 					else
@@ -181,33 +182,18 @@ public class Matrix {
 		return list;
 	}
 
-
-	/**
-	 * Performs row operation on array based on parameters
-	 * @param array array on which row operation is being performed
-	 * @param pivot pivot row of array
-	 * @param row row whose values are being changed
-	 * @param scalar number to multiply the pivot row by and add to specificed row
-	 * @return result of row operation
-	 */
-	private static double[][] rowOperation(double[][] array, int pivot, int row, double scalar) {
-		for (int j = 0; j < array[0].length; j++)
-			array[row][j] += (array[pivot][j] * scalar * -1);
-		return array;
-	}
-
 	/**
 	 * A Hilbert matrix is a square matrix whose entries are defined as H_ij = 1 / (i + j - 1)
 	 * @param dim dimension of Hilbert matrix
 	 * @return Hilbert matrix represented a 2D array
 	 */
-	public static double[][] getHilbertArray(int dim) {
-		double[][] array = new double[dim][dim];
+	public static Matrix getHilbertMatrix(int dim) {
+		Matrix hilbert = new Matrix(dim);
 		for (int i = 0; i < dim; i++)
 			for (int j = 0; j < dim; j++)
 				// Simply adding 1 since arrays are 0 indexed
-				array[i][j] = (double) 1 / (i + j + 1);
-		return array;
+				hilbert.matrix[i][j] = (double) 1 / (i + j + 1);
+		return hilbert;
 	}
 
 	/**
@@ -216,25 +202,11 @@ public class Matrix {
 	 * @param dim dimensions of array
 	 * @return identity array
 	 */
-	public static double[][] getIdentityArray(int dim) {
-		double[][] array = new double[dim][dim];
+	public static Matrix getIdentityMatrix(int dim) {
+		Matrix identity = new Matrix(dim);
 		for (int i = 0; i < dim; i++)
-			array[i][i] = 1;
-		return array;
-	}
-
-	/**
-	 * @return true if two matrices have an equal number of rows and columns
-	 */
-	private boolean haveEqualDimensions(double[][] array) {
-		return ((this.numRows == array.length) && (this.numCols == array[0].length));
-	}
-
-	/**
-	 * @return true if number of rows in A is equal to number of columns in B
-	 */
-	private boolean checkDims(double[][] array) {
-		return (this.numCols == array.length);
+			identity.matrix[i][i] = 1;
+		return identity;
 	}
 
 	@Override
@@ -248,5 +220,32 @@ public class Matrix {
 			sb.append("\n");
 		}
 		return sb.toString();
+	}
+
+	/**
+	 * Performs row operation on array based on parameters
+	 * @param array array on which row operation is being performed
+	 * @param pivot pivot row of array
+	 * @param row row whose values are being changed
+	 * @param scalar number to multiply the pivot row by and add to specified row
+	 * @return result of row operation
+	 */
+	private void rowOperation(int pivot, int row, double scalar) {
+		for (int j = 0; j < matrix[0].length; j++)
+			matrix[row][j] += (matrix[pivot][j] * scalar * -1);
+	}
+
+	/**
+	 * @return true if two matrices have an equal number of rows and columns
+	 */
+	private boolean haveEqualDimensions(Matrix m) {
+		return ((this.numRows == m.numRows) && (this.numCols == m.numCols));
+	}
+
+	/**
+	 * @return true if number of rows in A is equal to number of columns in B
+	 */
+	private boolean checkDims(Matrix m) {
+		return (this.numCols == m.numRows);
 	}
 }

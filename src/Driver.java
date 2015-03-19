@@ -3,8 +3,7 @@ import java.util.Scanner;
 
 public class Driver {
 	public static void main(String[] args) throws FileNotFoundException {
-		double[][] array = Matrix.getHilbertArray(4);
-		Matrix matrix = new Matrix(array);
+		Matrix matrix = Matrix.getHilbertMatrix(4);
 
 		// Decide how to round decimals in matrix; to what extent must error be calculated?
 		System.out.println("Original matrix: \n" + matrix);
@@ -22,7 +21,6 @@ public class Driver {
 		System.out.println("To ensure that the LU decomposition is correct, L and U should "
 				+ "multiply together to form the original matrix. Result of L * U is below.");
 		System.out.println(list[0].multiply(list[1]));
-		System.out.println("HERE I AM + \n" + matrix);
 
 		list = matrix.qr_fact_givens();
 		System.out.println("QR factorization of matrix using Givens Rotations:");
