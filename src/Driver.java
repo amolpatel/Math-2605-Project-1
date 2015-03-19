@@ -1,20 +1,12 @@
-
+import java.io.FileNotFoundException;
+import java.util.Scanner;
 
 public class Driver {
-
-	public static void main(String[] args) {
-		double[][] array = new double[3][3];
-		int count = 1;
-		for (int i = 0; i < 3; i++)
-			for (int j = 0; j < 3; j++)
-			{
-				array[i][j] = count * 2;
-				count++;;
-			}
-		// Setting array[1][1] to 100 so the matrix isn't a singular matrix
-		array[1][1] = 100;
+	public static void main(String[] args) throws FileNotFoundException {
+		double[][] array = Matrix.getHilbertArray(4);
 		Matrix matrix = new Matrix(array);
 
+		// Decide how to round decimals in matrix; to what extent must error be calculated?
 		System.out.println("Original matrix: \n" + matrix);
 		System.out.println("Matrix added to itself: \n" + matrix.add(matrix));
 		System.out.println("Matrix subtracted from itself: \n" + matrix.subtract(matrix));
@@ -30,8 +22,23 @@ public class Driver {
 		System.out.println("To ensure that the LU decomposition is correct, L and U should "
 				+ "multiply together to form the original matrix. Result of L * U is below.");
 		System.out.println(list[0].multiply(list[1]));
+		System.out.println("HERE I AM + \n" + matrix);
+
+		list = matrix.qr_fact_givens();
+		System.out.println("QR factorization of matrix using Givens Rotations:");
+		System.out.println("Q\n" + list[0] + "\nR\n" + list[1]);
+		System.out.println("To ensure that the QR factorization is correct, Q and R should "
+				+ "multiply together to form the original matrix. Result of L * U is below.");
+		System.out.println(list[0].multiply(list[1]));
 
         System.out.println("Matrix diagonalized: \n" + matrix.diagonalize());
         System.out.println("Matrix absolute value: \n" + matrix.absoluteValue());
+
+		// Testing FileParser below
+        // Added data.dat file to project folder, so test with that if you need to
+        Scanner in = new Scanner(System.in);
+        System.out.println("Enter filepath: ");
+        String path = in.next();
+        System.out.println(FileParser.parseFile(path));
 	}
 }
