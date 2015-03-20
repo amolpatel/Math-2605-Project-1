@@ -9,7 +9,6 @@ public class Driver {
     static Matrix[] list;
 
 	public static void main(String[] args) throws FileNotFoundException {
-        // /Users/asdghowns/Documents/workspace/2605Project/data
         // Decide how to round decimals in matrix; to what extent must error be calculated?
 		System.out.println("Welcome to part 1 of the project.");
     	while (true)
@@ -39,12 +38,11 @@ public class Driver {
             			break;
             	case 5: caseFive();
             			break;
-
             }
     	}
     }
 
-	public static void caseOne(Matrix matrix) throws FileNotFoundException {
+	public static void caseOne(Matrix matrix) {
 		list = matrix.lu_fact();
 		System.out.println("LU decomposition of matrix:");
 		System.out.println("L\n" + list[0] + "\nU\n" + list[1]);
@@ -53,7 +51,7 @@ public class Driver {
 		System.out.println(list[0].multiply(list[1]));
 	}
 
-	public static void caseTwo(Matrix matrix) throws FileNotFoundException {
+	public static void caseTwo(Matrix matrix) {
 		list = matrix.qr_fact_househ();
 		System.out.println("QR factorization of matrix using HH Rotations:");
 		System.out.println("Q\n" + list[0] + "\nR\n" + list[1]);
@@ -62,7 +60,7 @@ public class Driver {
 		System.out.println(list[0].multiply(list[1]));
 	}
 
-	public static void caseThree(Matrix matrix) throws FileNotFoundException {
+	public static void caseThree(Matrix matrix) {
 		list = matrix.qr_fact_givens();
 		System.out.println("QR factorization of matrix using Givens Rotations:");
 		System.out.println("Q\n" + list[0] + "\nR\n" + list[1]);
@@ -71,7 +69,7 @@ public class Driver {
 		System.out.println(list[0].multiply(list[1]));
 	}
 
-	public static void caseFour(Matrix[] list) throws FileNotFoundException {
+	public static void caseFour(Matrix[] list) {
 		System.out.println("Solving Ax = b using LU decomposition. Value of x is below:");
 		System.out.println(list[0].solve_lu_b(list[1]));
 		System.out.println("Solving Ax = b using QR decomposition via Givens rotations. x value is below:");
