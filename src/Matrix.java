@@ -356,6 +356,19 @@ public class Matrix {
     }
 
     /**
+     * Returns a n by 1 b vector in form b = (0.1 ^ (n/3)) * (1, 1,... , 1)^t
+     * @param dim number of rows
+     * @return b vector containing entries as described above
+     */
+    public static Matrix getBVector(int dim) {
+    	Matrix b = new Matrix(dim, 1);
+    	double entry = Math.pow(.1, (double) dim / 3);
+    	for (int i = 0; i < b.numRows; i++)
+    		b.matrix[i][0] = entry;
+    	return b;
+    }
+
+    /**
 	 * A Hilbert matrix is a square matrix whose entries are defined as H_ij = 1 / (i + j - 1)
 	 * @param dim dimension of Hilbert matrix
 	 * @return Hilbert matrix represented a 2D array
