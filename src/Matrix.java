@@ -156,6 +156,18 @@ public class Matrix {
 		return x;
 	}
 
+	public Matrix solve_qr_b_givens(Matrix b) {
+		Matrix[] list = this.qr_fact_givens();
+		Matrix x = backwardSubstitution(list[1], list[0].transpose().multiply(b));
+		return x;
+	}
+
+	public Matrix solve_qr_b_househ(Matrix b) {
+		Matrix[] list = this.qr_fact_givens();
+		Matrix x = backwardSubstitution(list[1], list[0].transpose().multiply(b));
+		return x;
+	}
+
 	/**
 	 * Solves equation Ax = b
 	 * @param a upper triangular, n by n matrix
@@ -242,11 +254,10 @@ public class Matrix {
     public Matrix[] qr_fact_househ(){
         Matrix q = null;
         Matrix r = new Matrix(matrix);
-        Matrix orig = new Matrix(matrix);
         for(int j = 0; j < numCols; j++)
 			for(int i = j + 1; i < numRows; i++)
-				if(((double)Math.round(r.matrix[i][j] * 100000) / 100000) != 0){
-                    Matrix x = getX(r,i-1,j);
+				if(((double)Math.round(r.matrix[i][j] * 100000) / 100000) != 0) {
+                    Matrix x = getX(r, i - 1, j);
                     Matrix v = getV(x);
                     Matrix u = getU(v);
                     Matrix Ut = u.transpose();
@@ -258,10 +269,10 @@ public class Matrix {
                     if(!h.haveEqualDimensions(r))
 						h = padH(h,r);
 
-                    if(q == null){
+                    if (q == null) {
                         q = h;
                         r = h.multiply(r);
-                    }else {
+                    } else {
                         q = q.multiply(h);
                         r = h.multiply(r);
                     }
@@ -271,7 +282,6 @@ public class Matrix {
         list[0] = q;
         list[1] = r;
         return list;
-
     }
 
     /**
@@ -282,7 +292,7 @@ public class Matrix {
         double result = 0;
 
         for(int i = 0; i < m.numRows; i++)
-			result += Math.pow(m.matrix[i][0],2);
+			result += Math.pow(m.matrix[i][0], 2);
         result = Math.sqrt(result);
         return result;
     }
@@ -294,8 +304,6 @@ public class Matrix {
     public Matrix getE(Matrix m){
         Matrix e = new Matrix(new double[m.numRows][1]);
         e.matrix[0][0] = getNorm(m);
-        for(int i = 1; i < m.numRows; i++)
-			e.matrix[i][0] = 0.00;
         return e;
     }
 
@@ -315,7 +323,7 @@ public class Matrix {
      * Returns u bar vector in Householder
      */
     public Matrix getU(Matrix v){
-        return v.multiply(1/getNorm(v));
+        return v.multiply(1 / getNorm(v));
     }
 
     /**
@@ -346,7 +354,6 @@ public class Matrix {
 				returnMatrix.matrix[i][j] = h.matrix[i - rowDiff][j - rowDiff];
         return returnMatrix;
     }
-
 
     /**
 	 * A Hilbert matrix is a square matrix whose entries are defined as H_ij = 1 / (i + j - 1)
