@@ -182,6 +182,52 @@ public class Matrix {
     }
 
     /**
+     * Performs QR factorization of a square matrix using HouseHolder Reflections where
+     * Q = (H_1 * H_2 * ... H_m-1)
+     * R = ((H_m-1 * ... H_3 * H_2 * H_1) * A)
+     * Worked out example of how to perform this calculation is on page 9 of the following link
+     * https://files.t-square.gatech.edu/access/content/group/gtc-1e04-e0d7-51e4-a454-b328339e73da/2605classnotesWeek6_b.pdf
+     * @return matrices Q and R
+     */
+    public Matrix[] qr_fact_househ(){
+        Matrix q = null;
+        Matrix r = new Matrix(matrix);
+        Matrix orig = new Matrix(matrix);
+        for(int j = 0; j < numCols; j++){
+            for(int i = j + 1; i < numRows; i++){
+                if(((double)Math.round(r.matrix[i][j] * 100000) / 100000) != 0){
+                    Matrix x = getX(r,i-1,j);
+                    Matrix v = getV(x);
+                    Matrix u = getU(v);
+                    Matrix Ut = u.transpose();
+                    Matrix UUt = u.multiply(Ut);
+                    Matrix twoUUt = UUt.multiply(2);
+                    Matrix I = getIdentityMatrix(twoUUt.numRows);
+                    Matrix h = I.subtract(twoUUt);
+
+                    if(!haveEqualDimensions(h,r)){
+                        h = padH(h,r);
+                    }
+
+                    if(q == null){
+                        q = h;
+                        r = h.multiply(r);
+                    }else {
+                        q = q.multiply(h);
+                        r = h.multiply(r);
+                    }
+
+                }
+            }
+        }
+        Matrix[] list = new Matrix[2];
+        list[0] = q;
+        list[1] = r;
+        return list;
+
+    }
+
+    /**
      * Finds a norm of a vector given as array
      * @return norm of vector
      */
@@ -256,52 +302,6 @@ public class Matrix {
             }
         }
         return returnMatrix;
-    }
-
-    /**
-     * Performs QR factorization of a square matrix using HouseHolder Reflections where
-     * Q = (H_1 * H_2 * ... H_m-1)
-     * R = ((H_m-1 * ... H_3 * H_2 * H_1) * A)
-     * Worked out example of how to perform this calculation is on page 9 of the following link
-     * https://files.t-square.gatech.edu/access/content/group/gtc-1e04-e0d7-51e4-a454-b328339e73da/2605classnotesWeek6_b.pdf
-     * @return matrices Q and R
-     */
-    public Matrix[] qr_fact_hh(){
-        Matrix q = null;
-        Matrix r = new Matrix(matrix);
-        Matrix orig = new Matrix(matrix);
-        for(int j = 0; j < numCols; j++){
-            for(int i = j + 1; i < numRows; i++){
-                if(((double)Math.round(r.matrix[i][j] * 100000) / 100000) != 0){
-                    Matrix x = getX(r,i-1,j);
-                    Matrix v = getV(x);
-                    Matrix u = getU(v);
-                    Matrix Ut = u.transpose();
-                    Matrix UUt = u.multiply(Ut);
-                    Matrix twoUUt = UUt.multiply(2);
-                    Matrix I = getIdentityMatrix(twoUUt.numRows);
-                    Matrix h = I.subtract(twoUUt);
-
-                    if(!haveEqualDimensions(h,r)){
-                        h = padH(h,r);
-                    }
-
-                    if(q == null){
-                        q = h;
-                        r = h.multiply(r);
-                    }else {
-                        q = q.multiply(h);
-                        r = h.multiply(r);
-                    }
-
-                }
-            }
-        }
-        Matrix[] list = new Matrix[2];
-        list[0] = q;
-        list[1] = r;
-        return list;
-
     }
 
 
