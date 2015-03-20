@@ -189,7 +189,7 @@ public class Matrix {
      * https://files.t-square.gatech.edu/access/content/group/gtc-1e04-e0d7-51e4-a454-b328339e73da/2605classnotesWeek6_b.pdf
      * @return matrices Q and R
      */
-    public Matrix[] qr_fact_hh(){
+    public Matrix[] qr_fact_househ(){
         Matrix q = null;
         Matrix r = new Matrix(matrix);
         Matrix orig = new Matrix(matrix);
