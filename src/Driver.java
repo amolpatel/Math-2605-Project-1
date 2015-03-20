@@ -32,7 +32,7 @@ public class Driver {
         System.out.println(list[0].multiply(list[1]));
 
 
-        list = matrix.qr_fact_hh();
+        list = matrix.qr_fact_househ();
         System.out.println("QR factorization of matrix using HH Rotations:");
         System.out.println("Q\n" + list[0] + "\nR\n" + list[1]);
         System.out.println("To ensure that the QR factorization is correct, Q and R should "
