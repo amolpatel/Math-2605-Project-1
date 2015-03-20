@@ -163,7 +163,7 @@ public class Matrix {
 	}
 
 	public Matrix solve_qr_b_househ(Matrix b) {
-		Matrix[] list = this.qr_fact_givens();
+		Matrix[] list = this.qr_fact_househ();
 		Matrix x = backwardSubstitution(list[1], list[0].transpose().multiply(b));
 		return x;
 	}

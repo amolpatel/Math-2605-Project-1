@@ -40,7 +40,7 @@ public class Driver {
         System.out.println(matrix.solve_qr_b_givens(b));
 
         list = matrix.qr_fact_househ();
-        System.out.println("QR factorization of matrix using HH Rotations:");
+        System.out.println("QR factorization of matrix using Householder reflections:");
         System.out.println("Q\n" + list[0] + "\nR\n" + list[1]);
         System.out.println("To ensure that the QR factorization is correct, Q and R should "
                 + "multiply together to form the original matrix. Result of Q * R is below.");
