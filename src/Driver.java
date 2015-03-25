@@ -30,10 +30,9 @@ public class Driver {
             			caseTwo(matrix);
         				break;
             	case 3: matrix = FileParser.parseFile(path);
-            			caseTwo(matrix);
+            			caseThree(matrix);
             			break;
             	case 4: Matrix[] augmented = FileParser.parseFileWithB(path);
-            			System.out.println(augmented[0]);
             			caseFour(augmented);
             			break;
             	case 5: caseFive();
@@ -46,36 +45,52 @@ public class Driver {
 		list = matrix.lu_fact();
 		System.out.println("LU decomposition of matrix:");
 		System.out.println("L\n" + list[0] + "\nU\n" + list[1]);
-		System.out.println("To ensure that the LU decomposition is correct, L and U should "
-				+ "multiply together to form the original matrix. Result of L * U is below.");
-		System.out.println(list[0].multiply(list[1]));
+		System.out.println("Error of ||LU - A||_inf:");
+		// difference = LU - A
+		Matrix difference = matrix.subtract(list[0].multiply(list[1]));
+		System.out.println(difference.getMaxNorm());
 	}
 
 	public static void caseTwo(Matrix matrix) {
 		list = matrix.qr_fact_househ();
 		System.out.println("QR factorization of matrix using HH Rotations:");
 		System.out.println("Q\n" + list[0] + "\nR\n" + list[1]);
-		System.out.println("To ensure that the QR factorization is correct, Q and R should "
-				+ "multiply together to form the original matrix. Result of Q * R is below.");
-		System.out.println(list[0].multiply(list[1]));
+		// difference = QR - A
+		Matrix difference = matrix.subtract(list[0].multiply(list[1]));
+		System.out.println(difference.getMaxNorm());
 	}
 
 	public static void caseThree(Matrix matrix) {
 		list = matrix.qr_fact_givens();
 		System.out.println("QR factorization of matrix using Givens Rotations:");
 		System.out.println("Q\n" + list[0] + "\nR\n" + list[1]);
-		System.out.println("To ensure that the QR factorization is correct, Q and R should "
-				+ "multiply together to form the original matrix. Result of Q * R is below.");
-		System.out.println(list[0].multiply(list[1]));
+		// difference = QR - A
+		Matrix difference = matrix.subtract(list[0].multiply(list[1]));
+		System.out.println(difference.getMaxNorm());
 	}
 
 	public static void caseFour(Matrix[] list) {
 		System.out.println("Solving Ax = b using LU decomposition. Value of x is below:");
-		System.out.println(list[0].solve_lu_b(list[1]));
+		Matrix x = list[0].solve_lu_b(list[1]);
+		System.out.println(x);
+		System.out.println("Error in solving Ax = b using LU decomposition (Ax - b):");
+		// difference = (A * x) - b
+		Matrix difference = (list[0].multiply(x)).subtract(list[1]);
+		System.out.println(difference.getMaxNorm() + "\n");
+
 		System.out.println("Solving Ax = b using QR decomposition via Givens rotations. x value is below:");
 		System.out.println(list[0].solve_qr_b_givens(list[1]));
+		System.out.println("Error in solving Ax = b using QR decomposition via Givens Rotations:");
+		// difference = (A * x) - b
+		difference = (list[0].multiply(x)).subtract(list[1]);
+		System.out.println(difference.getMaxNorm() + "\n");
+
 		System.out.println("Solving Ax = b using QR decomposition via Householder reflections. x value is below:");
 		System.out.println(list[0].solve_qr_b_househ(list[1]));
+		System.out.println("Error in solving Ax = b using Householder reflections:");
+		// difference = (A * x) - b
+		difference = (list[0].multiply(x)).subtract(list[1]);
+		System.out.println(difference.getMaxNorm() + "\n");
 	}
 
 	public static void caseFive() throws FileNotFoundException {
