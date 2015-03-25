@@ -297,6 +297,21 @@ public class Matrix {
         return result;
     }
 
+
+    /**
+     * Finds a norm of a vector given as array
+     * @return norm of vector
+     */
+    public double getNorm(){
+        double result = 0;
+
+        for(int i = 0; i < numRows; i++)
+			result += Math.pow(matrix[i][0], 2);
+        result = Math.sqrt(result);
+        return result;
+    }
+
+
     /**
      * Returns correct size of e vector multiplied by norm of x in HouseHolder
      * @return vector e
@@ -434,4 +449,21 @@ public class Matrix {
 	private boolean checkDims(Matrix m) {
 		return (this.numCols == m.numRows);
 	}
+
+	public int getNumRows() {
+		return numRows;
+	}
+	
+	public int getNumCols() {
+		return numCols;
+	}
+
+	public double get(int i, int j) {
+		return matrix[i][j];
+	}
+
+	public void set(int i, int j, double value) {
+		matrix[i][j] = value;
+	}
+
 }

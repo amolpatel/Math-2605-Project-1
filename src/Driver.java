@@ -4,42 +4,33 @@ import java.util.Scanner;
 public class Driver {
     static Scanner in = new Scanner(System.in);
     static Matrix matrix;
+    static Matrix matrix1;
+    static double[][] initialVector;
+    static double tol;
     static int input;
     static String path;
+    static String path1;
+    static String path2;
     static Matrix[] list;
 
 	public static void main(String[] args) throws FileNotFoundException {
         // Decide how to round decimals in matrix; to what extent must error be calculated?
-		System.out.println("Welcome to part 1 of the project.");
-    	while (true)
-    	{
-    		System.out.println("Select an option.");
-    		System.out.println("1 - LU decomposition using n x n matrices.");
-    		System.out.println("2 - QR factorization using Householder reflections.");
-    		System.out.println("3 - QR factorization using Givens rotations.");
-    		System.out.println("4 - Solve Ax = b using LU decomposition or QR factorization.");
-    		System.out.println("5 - Hilbert matrices from n = 2 to n = 20");
-    		input = in.nextInt();
-            System.out.println("Enter file path. If a file path is not required, just enter any character to move on.");
-            path = in.next();
-            switch (input) {
-            	case 1: matrix = FileParser.parseFile(path);
-            			caseOne(matrix);
-            			break;
-            	case 2: matrix = FileParser.parseFile(path);
-            			caseTwo(matrix);
-        				break;
-            	case 3: matrix = FileParser.parseFile(path);
-            			caseTwo(matrix);
-            			break;
-            	case 4: Matrix[] augmented = FileParser.parseFileWithB(path);
-            			System.out.println(augmented[0]);
-            			caseFour(augmented);
-            			break;
-            	case 5: caseFive();
-            			break;
-            }
-    	}
+	    System.out.println("Welcome to part 3 of the project.");
+		System.out.println("Enter the file path for matrix A.");
+		path1 = in.next();
+		System.out.println("Enter the file path for initial eigenvector");
+		path2 = in.next();
+		System.out.println("Enter the tol");
+		tol = Double.parseDouble(in.next());
+		matrix1 = FileParser.parseFile(path1);
+		initialVector = FileParser.parseVectorFile(path2, matrix1.getNumRows());
+		PowerMethod powerMethod = new PowerMethod(matrix1, tol, initialVector);
+		powerMethod.power_method();
+
+    	
+	
+			
+	
     }
 
 	public static void caseOne(Matrix matrix) {
