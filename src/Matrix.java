@@ -371,6 +371,20 @@ public class Matrix {
     }
 
     /**
+     * For the purpose of this project, the max norm is described as the matrix entry with the highest absolute value
+     * @return max norm
+     */
+    public double getMaxNorm() {
+    	// Initialize variable with some value in matrix
+    	double max = Math.abs(matrix[0][0]);
+    	for (int i = 0; i < numRows; i++)
+    		for (int j = 0; j < numCols; j++)
+    			if (Math.abs(matrix[i][j]) > max)
+    				max = Math.abs(matrix[i][j]);
+    	return max;
+    }
+
+    /**
      * Returns a n by 1 b vector in form b = (0.1 ^ (n/3)) * (1, 1,... , 1)^t
      * @param dim number of rows
      * @return b vector containing entries as described above
@@ -453,7 +467,7 @@ public class Matrix {
 	public int getNumRows() {
 		return numRows;
 	}
-	
+
 	public int getNumCols() {
 		return numCols;
 	}
