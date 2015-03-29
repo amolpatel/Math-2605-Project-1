@@ -30,7 +30,7 @@ public class Driver {
             			caseTwo(matrix);
         				break;
             	case 3: matrix = FileParser.parseFile(path);
-            			caseTwo(matrix);
+            			caseThree(matrix);
             			break;
             	case 4: Matrix[] augmented = FileParser.parseFileWithB(path);
             			System.out.println(augmented[0]);
@@ -38,6 +38,8 @@ public class Driver {
             			break;
             	case 5: caseFive();
             			break;
+                case 6: caseSix();
+                    break;
             }
     	}
     }
@@ -89,4 +91,40 @@ public class Driver {
 			caseFour(list);
 		}
 	}
+
+    public static void caseSix() throws FileNotFoundException {
+        double[][] vector = new double[8][1];
+        vector[0][0] = 1.00;
+        vector[1][0] = 0.00;
+        vector[2][0] = 1.00;
+        vector[3][0] = 1.00;
+        vector[4][0] = 0.00;
+        vector[5][0] = 0.00;
+        vector[6][0] = 0.00;
+        vector[7][0] = 0.00;
+
+        Matrix input = new Matrix(vector);
+
+
+        System.out.println(input.getA1());
+        Matrix Y0 = input.getA0().multiplyMod(input);
+
+
+        double[][] vector2 = new double[3][3];
+        vector2[0][0] = 3.00;
+        vector2[0][1] = 5.00;
+        vector2[0][2] = 5.00;
+        vector2[1][0] = 4.00;
+        vector2[1][1] = 2.00;
+        vector2[1][2] = 2.00;
+        vector2[2][0] = 2.00;
+        vector2[2][1] = 2.00;
+        vector2[2][2] = 2.00;
+
+
+        Matrix input2 = new Matrix(vector2);
+        System.out.println(input2.diagonalize().add(input2.lower().add(input2.upper())));
+        Matrix res = input2.gauss_seidel(input2,)
+
+    }
 }

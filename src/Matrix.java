@@ -1,3 +1,4 @@
+import java.util.Random;
 
 /**
  * Matrix class can be used to represent a matrix or vector as
@@ -350,7 +351,7 @@ public class Matrix {
         returnMatrix = getIdentityMatrix(r.numRows);
         int rowDiff = r.numCols - h.numCols;
         for(int i = rowDiff; i < numRows; i++)
-			for (int j = rowDiff; j < numCols; j++)
+			for(int j = rowDiff; j < numCols; j++)
 				returnMatrix.matrix[i][j] = h.matrix[i - rowDiff][j - rowDiff];
         return returnMatrix;
     }
@@ -394,6 +395,160 @@ public class Matrix {
 			identity.matrix[i][i] = 1;
 		return identity;
 	}
+
+    /**
+     * Generate A0
+     */
+    public Matrix getA0(){
+        Matrix A = new Matrix(numRows, numRows);
+        for(int row = 0; row < numRows; row++){
+            for(int col = 0; col < A.numCols; col++){
+                if(row >= col){
+                    if(row == col || row == col + 2 || row == col + 3){
+                        A.matrix[row][col] = 1.00;
+                    }
+                }
+                else{
+                    A.matrix[row][col] = 0.00;
+                }
+            }
+        }
+        return A;
+    }
+
+    /**
+     * Generate A1
+     */
+    public Matrix getA1(){
+        Matrix A1 = new Matrix(numRows, numRows);
+        for(int row = 0; row < numRows; row++){
+            for(int col = 0; col < A1.numCols; col++){
+                if(row >= col){
+                    if(row == col || row == col + 1 || row == col + 3){
+                        A1.matrix[row][col] = 1.00;
+                    }
+                }
+                else{
+                    A1.matrix[row][col] = 0.00;
+                }
+            }
+        }
+        return A1;
+    }
+
+    /**
+     * Generate random X stream
+     */
+    public Matrix getXStream(){
+        Random rand = new Random();
+        Matrix X = new Matrix(rand.nextInt(5)+4,1);
+        for(int i = 0; i < X.numRows; i++){
+            X.matrix[i][0] = rand.nextInt(2);
+            if(i == X.numRows - 1 || i == X.numRows - 2 || i == X.numRows - 3){
+                X.matrix[i][0] = 0;
+            }
+        }
+        return X;
+    }
+
+    /**
+     * Generate random Y stream
+     */
+    public Matrix getYStream(){
+        Random rand = new Random();
+        Matrix Y = new Matrix(rand.nextInt(5)+4,1);
+        for(int i = 0; i < Y.numRows; i++){
+            Y.matrix[i][0] = rand.nextInt(2);
+        }
+        return Y;
+    }
+
+
+    /**
+     * Modded matrix multiplication for Convolutional Code
+     * @param m matrix to multiply by
+     * @return matrix result of multiplying two matrices % 2
+     */
+    public Matrix multiplyMod(Matrix m) {
+        if (!checkDims(m))
+            throw new IllegalArgumentException("Matrices cannot be multiplied.");
+        Matrix result = new Matrix(numRows, m.numCols);
+        for (int i = 0; i < numRows; i++)
+            for (int j = 0; j < m.numCols; j++)
+                for (int k = 0; k < numCols; k++) {
+                    result.matrix[i][j] += matrix[i][k] * m.matrix[k][j];
+                    result.matrix[i][j] = result.matrix[i][j] % 2;
+                }
+        return result;
+    }
+
+    /**
+     * Gauss-Seidel
+     * @return
+     */
+    public Matrix gauss_seidel(Matrix A, Matrix y, Matrix initialX, int iterations){
+        Matrix x_k = initialX;
+        Matrix b = y;
+        Matrix x_k_1 = null;
+
+
+        for(int i = 0; i < iterations; i++){
+            Matrix L = A.lower();
+            Matrix U = A.upper();
+            Matrix D = A.diagonal();
+            Matrix LHS = L.add(D);
+            Matrix negativeU = U.multiply(-1);
+            Matrix RHS = negativeU.multiply(x_k);
+            RHS = RHS.add(b);
+            x_k_1 = forwardSubstitution(LHS,RHS);
+            x_k = x_k_1;
+        }
+        return x_k_1;
+    }
+
+    /**
+     * Get lower triangular of Matrix m
+     */
+    public Matrix lower(){
+        Matrix result = new Matrix(numRows,numCols);
+        for(int i = 1; i < numRows; i++){
+            for(int j = 0; j <= i - 1; j++){
+                result.matrix[i][j] = this.matrix[i][j];
+            }
+        }
+        return result;
+    }
+
+    /**
+     * Get upper triangular of Matrix m
+     */
+    public Matrix upper(){
+        Matrix result = this;
+        for(int i = 0; i < numRows; i++){
+            for(int j = 0; j <= i; j++){
+                result.matrix[i][j] = 0;
+            }
+        }
+        return result;
+    }
+
+    /**
+     * Get diagonal of Matrix m
+     */
+    public Matrix diagonal(){
+        Matrix result = this;
+        for(int i = 0; i < numRows; i++){
+            for(int j = 0; j < numRows; j++){
+                if(i == j){
+                    result.matrix[i][j] = this.matrix[i][j];
+                }
+                else{
+                    result.matrix[i][j] = 0;
+                }
+            }
+        }
+        return result;
+    }
 
 	@Override
 	public String toString() {
