@@ -110,18 +110,18 @@ public class Driver {
 			System.out.println(difference.getMaxNorm());
 			System.out.println("Erorr in ||Hx - b||:");
 			difference = (H.multiply(x)).subtract(b);
-			System.out.println(difference.getMaxNorm());
+			System.out.println(difference.getMaxNorm() + "\n");
 
 			System.out.println("Solution to Hx = b using QR decomposition via Householder reflections:");
 			x = H.solve_qr_b_househ(b);
 			System.out.println(x);
-			System.out.println("Error in ||LU - H||_inf:");
+			System.out.println("Error in ||QR - H||_inf:");
 			Matrix[] qr = H.qr_fact_househ();
 			difference = (qr[0].multiply(qr[1])).subtract(H);
 			System.out.println(difference.getMaxNorm());
 			System.out.println("Erorr in ||Hx - b||:");
 			difference = (H.multiply(x)).subtract(b);
-			System.out.println(difference.getMaxNorm());
+			System.out.println(difference.getMaxNorm() + "\n");
 
 			System.out.println("Solution to Hx = b using QR decomposition via Givens rotations:");
 			x = H.solve_qr_b_givens(b);
