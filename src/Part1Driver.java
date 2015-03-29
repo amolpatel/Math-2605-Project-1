@@ -1,23 +1,28 @@
 import java.io.FileNotFoundException;
 import java.util.Scanner;
 
-public class Driver {
+public class Part1Driver {
 	public static void main(String[] args) throws FileNotFoundException {
 	    Scanner in = new Scanner(System.in);
 		Matrix matrix;
 		System.out.println("Welcome to part 1 of the project.");
     	while (true)
     	{
-    		System.out.println("Select an option.");
+    		System.out.println("Select an option, or enter q to quit.");
     		System.out.println("1 - LU decomposition using n x n matrices.");
     		System.out.println("2 - QR factorization using Householder reflections.");
     		System.out.println("3 - QR factorization using Givens rotations.");
     		System.out.println("4 - Solve Ax = b using LU decomposition or QR factorization.");
     		System.out.println("5 - Hilbert matrices from n = 2 to n = 20");
-    		int input = in.nextInt();
+    		String input = in.next();
+    		int inputNum;
+    		if (input.equalsIgnoreCase("q"))
+    			break;
+    		else
+    			inputNum = Integer.parseInt(input);
             System.out.println("Enter file path. If a file path is not required, just enter any character to move on.");
             String path = in.next();
-            switch (input) {
+            switch (inputNum) {
             	case 1: matrix = FileParser.parseFile(path);
             			caseOne(matrix);
             			break;
@@ -133,7 +138,7 @@ public class Driver {
 
 			System.out.println("Erorr in ||Hx - b||:");
 			difference = (H.multiply(x)).subtract(b);
-			System.out.println(difference.getMaxNorm());
+			System.out.println(difference.getMaxNorm() + "\n");
 		}
 	}
 }
