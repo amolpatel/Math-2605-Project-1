@@ -21,6 +21,10 @@ public class Matrix {
 		numCols = matrix[0].length;
 	}
 
+    public int getRows(){
+        return this.numRows;
+    }
+
 	/**
 	 * @return matrix result of adding two matrices together
 	 */
@@ -439,7 +443,7 @@ public class Matrix {
     /**
      * Generate random X stream
      */
-    public Matrix getXStream(){
+    public static Matrix getXStream(){
         Random rand = new Random();
         Matrix X = new Matrix(rand.nextInt(5)+4,1);
         for(int i = 0; i < X.numRows; i++){
@@ -454,7 +458,7 @@ public class Matrix {
     /**
      * Generate random Y stream
      */
-    public Matrix getYStream(){
+    public static Matrix getYStream(){
         Random rand = new Random();
         Matrix Y = new Matrix(rand.nextInt(5)+4,1);
         for(int i = 0; i < Y.numRows; i++){
@@ -487,6 +491,11 @@ public class Matrix {
      * @return
      */
     public Matrix gauss_seidel(Matrix input, Matrix y, Matrix initialX){
+        boolean isBinary = false;
+        if(isBinary(input)){
+            isBinary = true;
+        }
+
         Matrix x_k = initialX;
         Matrix b = y;
         Matrix x_k_1 = null;
@@ -496,14 +505,74 @@ public class Matrix {
         Matrix D = A.diagonal();
 
         for(int i = 0; i < 100; i++){
-            Matrix LHS = L.add(D);
-            Matrix negativeU = U.multiply(-1);
-            Matrix RHS = negativeU.multiply(x_k);
-            RHS = RHS.add(b);
-            x_k_1 = forwardSubstitution(LHS,RHS);
-            x_k = x_k_1;
+            if(isBinary){
+                Matrix LHS = L.add(D);
+                Matrix negativeU = U.flip();
+                Matrix RHS = negativeU.multiplyMod(x_k);
+                RHS = RHS.addBinary(b);
+                x_k_1 = forwardSubstitution(LHS,RHS);
+                x_k = x_k_1;
+            }
+            else{
+                Matrix LHS = L.add(D);
+                Matrix negativeU = U.multiply(-1);
+                Matrix RHS = negativeU.multiplyMod(x_k);
+                RHS = RHS.add(b);
+                x_k_1 = forwardSubstitution(LHS,RHS);
+                x_k = x_k_1;
+            }
         }
         return x_k_1;
+    }
+
+    /**
+     * Flip binary matrix
+     */
+    public Matrix flip(){
+        for(int i = 0; i < this.numRows; i++){
+            for(int j = 0; j < this.numCols; j++){
+                if(this.matrix[i][j] == 1.00){
+                    this.matrix[i][j] = 0.00;
+                }
+                else if(this.matrix[i][j] == 0.00){
+                    this.matrix[i][j] = 1.00;
+                }
+            }
+        }
+        return this;
+    }
+
+    /**
+     * Add binary matrix
+     */
+    public Matrix addBinary(Matrix b){
+        Matrix result = new Matrix(b.numRows, b.numCols);
+
+        for(int i = 0; i < this.numRows; i++){
+            for(int j = 0; j < this.numCols; j++){
+                result.matrix[i][j] = this.matrix[i][j] + b.matrix[i][j];
+                if(result.matrix[i][j] == 2.00){
+                    result.matrix[i][j] = 0.00;
+                }
+            }
+        }
+        return result;
+    }
+
+
+    /**
+     * Check if Matrix is binary matrix
+     */
+    public static boolean isBinary(Matrix m){
+        boolean flag = true;
+        for(int i = 0; i < m.getRows(); i++){
+            for(int j = 0; j < m.getRows(); j++){
+                if(m.matrix[i][j] != 0.00 && m.matrix[i][j] != 1.00){
+                    return false;
+                }
+            }
+        }
+        return flag;
     }
 
     /**
@@ -527,11 +596,11 @@ public class Matrix {
         Matrix result = new Matrix(numRows,numCols);
         Matrix temp = this;
         for(int i = 0; i < numRows-1; i++){
-            for(int j = numCols-1; j <= i+1; j++){
+            for(int j = numCols-1; j >= i+1; j--){
                 result.matrix[i][j] = temp.matrix[i][j];
             }
         }
-        return temp;
+        return result;
     }
 
     /**
