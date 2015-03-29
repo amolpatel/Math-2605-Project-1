@@ -355,11 +355,11 @@ public class Matrix {
      */
     public double getMaxNorm() {
     	// Initialize variable with some value in matrix
-    	double max = matrix[0][0];
+    	double max = Math.abs(matrix[0][0]);
     	for (int i = 0; i < numRows; i++)
     		for (int j = 0; j < numCols; j++)
     			if (Math.abs(matrix[i][j]) > max)
-    				max = matrix[i][j];
+    				max = Math.abs(matrix[i][j]);
     	return max;
     }
     /**
