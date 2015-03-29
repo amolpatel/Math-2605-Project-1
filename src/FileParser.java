@@ -33,14 +33,20 @@ public class FileParser {
             doubleArray[0][i] = Double.parseDouble(stringArray[i]);
         // Parse remainder of file and add to double array
         for (int i = 1; i < matrixDim; i++)
+        {
+        	line = file.nextLine();
             for (int j = 0; j < matrixDim; j++)
-                doubleArray[i][j] = file.nextDouble();
+            {
+            	stringArray = line.split(",| ");
+                doubleArray[i][j] = Double.parseDouble(stringArray[j]);
+            }
+        }
         file.close();
         return (new Matrix(doubleArray));
     }
 
     /**
-     * Parses text file and returns list of matrices formed from data in file
+     * Parses text file looking for matrix A (n by n) and b (n by 1) and returns list of matrices
      * The following sample data file represents a 4 x 4 and 4 x 1 matrix:
      * 3 4 2 .4432 1
      * 3.2 -6.5 4 4 2
@@ -55,21 +61,26 @@ public class FileParser {
         String line = file.nextLine();
         // Find dimensions of matrix from first line of file
         String[] stringArray = line.split(",| ");
-        int matrixADim = stringArray.length - 1;
+        int matrixDim = stringArray.length - 1;
 
-        double[][] matrixArray = new double[matrixADim][matrixADim];
-        double[][] vectorArray = new double[matrixADim][1];
+        double[][] matrixArray = new double[matrixDim][matrixDim];
+        double[][] vectorArray = new double[matrixDim][1];
         // Copy first row of text file into arrays
-        for (int i = 0; i < matrixADim; i++)
+        for (int i = 0; i < matrixDim; i++)
         	matrixArray[0][i] = Double.parseDouble(stringArray[i]);
-        vectorArray[0][0] = Double.parseDouble(stringArray[matrixADim]);
+        vectorArray[0][0] = Double.parseDouble(stringArray[matrixDim]);
 
         // Parse remainder of file and add to double both arrays
-        for (int i = 1; i < matrixADim; i++)
+        int j;
+        for (int i = 1; i < matrixDim; i++)
         {
-            for (int j = 0; j < matrixADim; j++)
-            	matrixArray[i][j] = file.nextDouble();
-            vectorArray[i][0] = file.nextDouble();
+        	line = file.nextLine();
+            for (j = 0; j < matrixDim; j++)
+            {
+            	stringArray = line.split(",| ");
+                matrixArray[i][j] = Double.parseDouble(stringArray[j]);
+            }
+            vectorArray[i][0] = Double.parseDouble(stringArray[j]);
         }
         file.close();
         Matrix[] list = new Matrix[2];

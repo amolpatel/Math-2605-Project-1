@@ -1,4 +1,3 @@
-
 /**
  * Matrix class can be used to represent a matrix or vector as
  * a two dimensional array and supports various operations
@@ -92,27 +91,6 @@ public class Matrix {
 		return result;
 	}
 
-    /**
-     * @return diagonal of matrix
-     */
-    public Matrix diagonalize(){
-		Matrix result = new Matrix(numRows, numCols);
-        for(int i = 0; i < numRows; i++)
-			result.matrix[i][i] = matrix[i][i];
-        return result;
-    }
-
-    /**
-     * @return matrix containing absolute values of each entry in original matrix
-     */
-    public Matrix absoluteValue() {
-		Matrix result = new Matrix(numRows, numCols);
-        for(int i = 0; i < numRows; i++)
-			for(int j = 0; j < numCols; j++)
-				result.matrix[i][j] = Math.abs(matrix[i][j]);
-        return result;
-    }
-
 	/**
 	 * Performs LU decomposition of matrix
 	 * Worked out examples of how to calculate LU decomposition are at the following link
@@ -150,53 +128,69 @@ public class Matrix {
 	public Matrix solve_lu_b(Matrix b) {
 		Matrix[] list = this.lu_fact();
 		// Solve Ly = b using forward substitution since L is an lower triangular matrix
-		Matrix y = forwardSubstitution(list[0], b);
+		Matrix y = list[0].forwardSubstitution(b);
 		// Solve Ux = y using backwards substitution since U is a upper triangular matrix
-		Matrix x = backwardSubstitution(list[1], y);
-		return x;
-	}
-
-	public Matrix solve_qr_b_givens(Matrix b) {
-		Matrix[] list = this.qr_fact_givens();
-		Matrix x = backwardSubstitution(list[1], list[0].transpose().multiply(b));
-		return x;
-	}
-
-	public Matrix solve_qr_b_househ(Matrix b) {
-		Matrix[] list = this.qr_fact_househ();
-		Matrix x = backwardSubstitution(list[1], list[0].transpose().multiply(b));
+		Matrix x = list[1].backwardSubstitution(y);
 		return x;
 	}
 
 	/**
-	 * Solves equation Ax = b
+	 * Solves system Ax = b using Givens rotations where A is a n by n matrix and b is a n by 1 matrix
+	 * @param b vector to solve equation with
+	 * @return solution vector to system
+	 */
+	public Matrix solve_qr_b_givens(Matrix b) {
+		Matrix[] list = this.qr_fact_givens();
+		Matrix x = list[1].backwardSubstitution(list[0].transpose().multiply(b));
+		return x;
+	}
+
+	/**
+	 * Solves system Ax = b using Householder reflections where A is a n by n matrix and b is a n by 1 matrix
+	 * @param b vector to solve equation with
+	 * @return solution vector to system
+	 */
+	public Matrix solve_qr_b_househ(Matrix b) {
+		Matrix[] list = this.qr_fact_househ();
+		Matrix x = list[1].backwardSubstitution(list[0].transpose().multiply(b));
+		return x;
+	}
+
+	/**
+	 * Solves equation Ax = b using forward substitution
 	 * @param a upper triangular, n by n matrix
 	 * @param b n by 1 vector
 	 * @return matrix solution of system
 	 */
-	private Matrix forwardSubstitution(Matrix a, Matrix b) {
-		Matrix x = new Matrix(a.numCols, 1);
+	private Matrix forwardSubstitution(Matrix b) {
+		Matrix x = new Matrix(numCols, 1);
 		double total;
-		for (int i = 0; i < a.numCols; i++)
+		for (int i = 0; i < numCols; i++)
 		{
 			total = 0;
 			for (int j = 0; j < i; j++)
-				total += a.matrix[i][j] * x.matrix[j][0];
-			double x_n = (b.matrix[i][0] - total) / a.matrix[i][i];
+				total += matrix[i][j] * x.matrix[j][0];
+			double x_n = (b.matrix[i][0] - total) / matrix[i][i];
 			x.matrix[i][0] = x_n;
 		}
 		return x;
 	}
 
-	private Matrix backwardSubstitution(Matrix a, Matrix b) {
-		Matrix x = new Matrix(a.numCols, 1);
+	/**
+	 * Solves equation Ax = b using backward substitution
+	 * @param a lower triangular, n by n matrix
+	 * @param b n by 1 vector
+	 * @return matrix solution of system
+	 */
+	private Matrix backwardSubstitution(Matrix b) {
+		Matrix x = new Matrix(numCols, 1);
 		double total;
-		for (int i = a.numCols - 1; i >= 0; i--)
+		for (int i = numCols - 1; i >= 0; i--)
 		{
 			total = 0;
-			for (int j = a.numCols - 1; j > i; j--)
-				total += a.matrix[i][j] * x.matrix[j][0];
-			double x_n = (b.matrix[i][0] - total) / a.matrix[i][i];
+			for (int j = numCols - 1; j > i; j--)
+				total += matrix[i][j] * x.matrix[j][0];
+			double x_n = (b.matrix[i][0] - total) / matrix[i][i];
 			x.matrix[i][0] = x_n;
 		}
 		return x;
@@ -221,9 +215,9 @@ public class Matrix {
 				{
 					double x = r.matrix[j][j];
 					double y = r.matrix[i][j];
-					// cos theta = x/sqrt(x^2 + y^2)
+					// cos theta = x / sqrt(x^2 + y^2)
 					double cosTheta = x / (Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2)));
-					// sin theta = -y/sqrt(x^2 + y^2)
+					// sin theta = -y / sqrt(x^2 + y^2)
 					double sinTheta = -y / (Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2)));
 					Matrix g = getIdentityMatrix(numRows);
 					g.matrix[i][i] = cosTheta;
@@ -320,7 +314,8 @@ public class Matrix {
     }
 
     /**
-     * Returns u bar vector in Householder
+     * @param v vector of size n by 1
+     * @return u bar vector used in Householder reflection
      */
     public Matrix getU(Matrix v){
         return v.multiply(1 / getNorm(v));
@@ -328,7 +323,6 @@ public class Matrix {
 
     /**
      * Finds x bar vector used in Householder
-     * @param Matrix m, index i, index j
      * @return double array
      */
     public Matrix getX(Matrix m, int row, int col){
@@ -342,8 +336,8 @@ public class Matrix {
     }
 
     /**
-     * Pad h vector with identity
-     *
+     * Put vector h inside identity matrix
+     * @return identity matrix containing vector h
      */
     public Matrix padH(Matrix h, Matrix r){
         Matrix returnMatrix;
@@ -355,6 +349,19 @@ public class Matrix {
         return returnMatrix;
     }
 
+    /**
+     * For the purpose of this project, the max norm is described as the matrix entry with the highest absolute value
+     * @return max norm
+     */
+    public double getMaxNorm() {
+    	// Initialize variable with some value in matrix
+    	double max = Math.abs(matrix[0][0]);
+    	for (int i = 0; i < numRows; i++)
+    		for (int j = 0; j < numCols; j++)
+    			if (Math.abs(matrix[i][j]) > max)
+    				max = Math.abs(matrix[i][j]);
+    	return max;
+    }
     /**
      * Returns a n by 1 b vector in form b = (0.1 ^ (n/3)) * (1, 1,... , 1)^t
      * @param dim number of rows
