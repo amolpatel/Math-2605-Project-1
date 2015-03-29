@@ -124,7 +124,7 @@ public class Driver {
 
         Matrix input2 = new Matrix(vector2);
         System.out.println(input2.diagonalize().add(input2.lower().add(input2.upper())));
-        Matrix res = input2.gauss_seidel(input2,)
+
 
     }
 }
