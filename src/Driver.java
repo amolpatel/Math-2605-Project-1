@@ -105,11 +105,10 @@ public class Driver {
 
         Matrix input = new Matrix(vector);
 
-
-        System.out.println(input.getA1());
+        Matrix A0 = input.getA1();
         Matrix Y0 = input.getA0().multiplyMod(input);
 
-
+/*
         double[][] vector2 = new double[3][3];
         vector2[0][0] = 3.00;
         vector2[0][1] = 5.00;
@@ -120,10 +119,26 @@ public class Driver {
         vector2[2][0] = 2.00;
         vector2[2][1] = 2.00;
         vector2[2][2] = 2.00;
+*/
+        double[][] array = new double[2][2];
+        array[0][0] = 3.00;
+        array[0][1] = 5.00;
+        array[1][0] = 4.00;
+        array[1][1] = 2.00;
+        Matrix A = new Matrix(array);
 
+        double[][] array2 = new double[2][1];
+        array2[0][0] = 1.00;
+        array2[1][0] = 2.00;
+        Matrix Y = new Matrix(array2);
 
-        Matrix input2 = new Matrix(vector2);
-        System.out.println(input2.diagonalize().add(input2.lower().add(input2.upper())));
+        double[][] array3 = new double[2][1];
+        array3[0][0] = 0.00;
+        vector[1][0] = 0.00;
+        Matrix X = new Matrix(array3);
+
+        Matrix result = A.gauss_seidel(A,Y,X);
+        System.out.println(result);
 
 
     }

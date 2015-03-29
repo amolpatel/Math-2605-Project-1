@@ -486,16 +486,16 @@ public class Matrix {
      * Gauss-Seidel
      * @return
      */
-    public Matrix gauss_seidel(Matrix A, Matrix y, Matrix initialX, int iterations){
+    public Matrix gauss_seidel(Matrix input, Matrix y, Matrix initialX){
         Matrix x_k = initialX;
         Matrix b = y;
         Matrix x_k_1 = null;
+        Matrix A = input;
+        Matrix L = A.lower();
+        Matrix U = A.upper();
+        Matrix D = A.diagonal();
 
-
-        for(int i = 0; i < iterations; i++){
-            Matrix L = A.lower();
-            Matrix U = A.upper();
-            Matrix D = A.diagonal();
+        for(int i = 0; i < 100; i++){
             Matrix LHS = L.add(D);
             Matrix negativeU = U.multiply(-1);
             Matrix RHS = negativeU.multiply(x_k);
@@ -511,9 +511,10 @@ public class Matrix {
      */
     public Matrix lower(){
         Matrix result = new Matrix(numRows,numCols);
+        Matrix temp = this;
         for(int i = 1; i < numRows; i++){
             for(int j = 0; j <= i - 1; j++){
-                result.matrix[i][j] = this.matrix[i][j];
+                result.matrix[i][j] = temp.matrix[i][j];
             }
         }
         return result;
@@ -523,24 +524,26 @@ public class Matrix {
      * Get upper triangular of Matrix m
      */
     public Matrix upper(){
-        Matrix result = this;
-        for(int i = 0; i < numRows; i++){
-            for(int j = 0; j <= i; j++){
-                result.matrix[i][j] = 0;
+        Matrix result = new Matrix(numRows,numCols);
+        Matrix temp = this;
+        for(int i = 0; i < numRows-1; i++){
+            for(int j = numCols-1; j <= i+1; j++){
+                result.matrix[i][j] = temp.matrix[i][j];
             }
         }
-        return result;
+        return temp;
     }
 
     /**
      * Get diagonal of Matrix m
      */
     public Matrix diagonal(){
-        Matrix result = this;
+        Matrix result = new Matrix(numRows,numCols);
+        Matrix temp = this;
         for(int i = 0; i < numRows; i++){
             for(int j = 0; j < numRows; j++){
                 if(i == j){
-                    result.matrix[i][j] = this.matrix[i][j];
+                    result.matrix[i][j] = temp.matrix[i][j];
                 }
                 else{
                     result.matrix[i][j] = 0;
