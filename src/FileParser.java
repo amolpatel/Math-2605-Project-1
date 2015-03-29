@@ -88,4 +88,22 @@ public class FileParser {
         list[1] = new Matrix(vectorArray);
         return list;
     }
+
+     /**
+      *1
+      *2
+      *3
+      */
+     public static double[][] parseVectorFile(String filePath, int rowDim) throws FileNotFoundException {
+	Scanner file = new Scanner(new File(filePath));
+        // Find dimensions of matrix rows from first line of file
+   	double[][] vectorArray = new double[rowDim][1];
+	for (int i = 0; i < rowDim; i++) {
+            vectorArray[i][0] = file.nextDouble();
+	}
+	file.close();
+	return vectorArray;
+
+    }
+
 }

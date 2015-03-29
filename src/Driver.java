@@ -5,7 +5,6 @@ public class Driver {
 	public static void main(String[] args) throws FileNotFoundException {
 	    Scanner in = new Scanner(System.in);
 		Matrix matrix;
-        // Decide how to round decimals in matrix; to what extent must error be calculated?
 		System.out.println("Welcome to part 1 of the project.");
     	while (true)
     	{
