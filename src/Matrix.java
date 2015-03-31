@@ -208,7 +208,10 @@ public class Matrix {
 		// Can QR factorization using Givens be done on non-square matrices?
 		Matrix q = null;
 		// Copy original matrix into r for row reduction and to avoid changing original matrix
-		Matrix r = new Matrix(matrix);
+		Matrix r = new Matrix(numRows, numCols);
+		for (int i = 0; i < numRows; i++)
+			System.arraycopy(matrix[i], 0, r.matrix[i], 0, numCols);
+
 		for (int j = 0; j < numCols; j++)
 			for (int i = j + 1; i < numRows; i++)
 				if (r.matrix[i][j] != 0)
@@ -247,31 +250,35 @@ public class Matrix {
      */
     public Matrix[] qr_fact_househ(){
         Matrix q = null;
-        Matrix r = new Matrix(matrix);
-        for(int j = 0; j < numCols; j++)
-			for(int i = j + 1; i < numRows; i++)
-				if(((double)Math.round(r.matrix[i][j] * 100000) / 100000) != 0) {
-                    Matrix x = getX(r, i - 1, j);
-                    Matrix v = getV(x);
-                    Matrix u = getU(v);
-                    Matrix Ut = u.transpose();
-                    Matrix UUt = u.multiply(Ut);
-                    Matrix twoUUt = UUt.multiply(2);
-                    Matrix I = getIdentityMatrix(twoUUt.numRows);
-                    Matrix h = I.subtract(twoUUt);
+        // Copy original matrix into r for row reduction and to avoid changing original matrix
+     	Matrix r = new Matrix(numRows, numCols);
+     	for (int i = 0; i < numRows; i++)
+     		System.arraycopy(matrix[i], 0, r.matrix[i], 0, numCols);
 
-                    if(!h.haveEqualDimensions(r))
-						h = padH(h,r);
+		for (int j = 0; j < numCols; j++)
+			for (int i = j + 1; i < numRows; i++)
+				if (Math.abs(r.matrix[i][j]) > 1E-15)
+				{
+					Matrix x_n = new Matrix(numRows - j, 1);
+					for (int k = 0, count = 0; j + k < r.numRows; k++, count++)
+						x_n.matrix[count][0] = r.matrix[j + k][j];
+					double x_n_norm = x_n.getNorm();
+					x_n.matrix[0][0] -= x_n_norm;
+					x_n_norm = x_n.getNorm();
+					Matrix u_n = x_n.multiply(1 / x_n_norm);
+					Matrix identity = getIdentityMatrix(u_n.numRows);
+					Matrix rightStuff = u_n.multiply(u_n.transpose()).multiply(2);
+					Matrix result = identity.subtract(rightStuff);
+					Matrix padded = padH(result, getIdentityMatrix(r.numRows));
+					r = padded.multiply(r);
+					// Sets q equal to "H_n" the first time the loop runs, otherwise calculates q as it should
+					if (q == null)
+						q = padded;
+					else
+						q = q.multiply(padded);
+				} else
+					r.matrix[i][j] = 0;
 
-                    if (q == null) {
-                        q = h;
-                        r = h.multiply(r);
-                    } else {
-                        q = q.multiply(h);
-                        r = h.multiply(r);
-                    }
-
-                }
         Matrix[] list = new Matrix[2];
         list[0] = q;
         list[1] = r;
@@ -279,96 +286,39 @@ public class Matrix {
     }
 
     /**
-     * Finds a norm of a vector given as array
+     * The norm of a vector is defined as the square root of the result of adding each entry in the vector squared
+     * For example, the vector [x_1, x_2, x_3] has a norm defined as sqrt((x_1)^2 + (x_2)^2 + (x_3)^2)
      * @return norm of vector
      */
-    public double getNorm(Matrix m){
-        double result = 0;
-
-        for(int i = 0; i < m.numRows; i++)
-			result += Math.pow(m.matrix[i][0], 2);
-        result = Math.sqrt(result);
-        return result;
+    public double getNorm() {
+    	if (this.numCols != 1)
+    		throw new IllegalArgumentException("Matrix must be an n by 1 matrix.");
+    	double total = 0;
+    	for (int i = 0; i < numRows; i++)
+			total += Math.pow(matrix[i][0], 2);
+    	return Math.sqrt(total);
     }
 
 
     /**
-     * Finds a norm of a vector given as array
-     * @return norm of vector
-     */
-    public double getNorm(){
-        double result = 0;
-
-        for(int i = 0; i < numRows; i++)
-			result += Math.pow(matrix[i][0], 2);
-        result = Math.sqrt(result);
-        return result;
-    }
-
-
-    /**
-     * Returns correct size of e vector multiplied by norm of x in HouseHolder
-     * @return vector e
-     */
-    public Matrix getE(Matrix m){
-        Matrix e = new Matrix(new double[m.numRows][1]);
-        e.matrix[0][0] = getNorm(m);
-        return e;
-    }
-
-    /**
-     * Returns v vector in HouseHolder
-     * v = x + e * norm(x)
-     * @return vector e
-     */
-    public Matrix getV(Matrix x){
-        Matrix v;
-        Matrix e = getE(x);
-        v = e.add(x);
-        return v;
-    }
-
-    /**
-     * @param v vector of size n by 1
-     * @return u bar vector used in Householder reflection
-     */
-    public Matrix getU(Matrix v){
-        return v.multiply(1 / getNorm(v));
-    }
-
-    /**
-     * Finds x bar vector used in Householder
-     * @return double array
-     */
-    public Matrix getX(Matrix m, int row, int col){
-        Matrix x = new Matrix(new double[m.numRows-row][1]);
-        int tempRow = row;
-        for(int i = row; i < numRows; i++){
-            x.matrix[i-tempRow][0] = m.matrix[row][col];
-            row++;
-        }
-        return x;
-    }
-
-    /**
-     * Put vector h inside identity matrix
+     * Places matrix passed as parameter inside an identity matrix; used for constructing H
+     * matrices in Householder reflections. The matrix will be placed in the lower right hand
+     * corner of the identity matrix
      * @return identity matrix containing vector h
      */
-    public Matrix padH(Matrix h, Matrix r){
-        Matrix returnMatrix;
-        returnMatrix = getIdentityMatrix(r.numRows);
-        int rowDiff = r.numCols - h.numCols;
-        for(int i = rowDiff; i < numRows; i++)
-			for (int j = rowDiff; j < numCols; j++)
-				returnMatrix.matrix[i][j] = h.matrix[i - rowDiff][j - rowDiff];
-        return returnMatrix;
+    private Matrix padH(Matrix innerMatrix, Matrix identity) {
+        int dimDiff = identity.numCols - innerMatrix.numCols;
+        for(int i = dimDiff; i < identity.numRows; i++)
+			for (int j = dimDiff; j < identity.numCols; j++)
+				identity.matrix[i][j] = innerMatrix.matrix[i - dimDiff][j - dimDiff];
+        return identity;
     }
 
     /**
-     * For the purpose of this project, the max norm is described as the matrix entry with the highest absolute value
+     * For the purpose of this project, the error is described as the matrix entry with the highest absolute value
      * @return max norm
      */
-    public double getMaxNorm() {
+    public double getError() {
     	// Initialize variable with some value in matrix
     	double max = Math.abs(matrix[0][0]);
     	for (int i = 0; i < numRows; i++)
@@ -473,5 +423,4 @@ public class Matrix {
 	public void set(int i, int j, double value) {
 		matrix[i][j] = value;
 	}
-
 }

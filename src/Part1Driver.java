@@ -48,7 +48,7 @@ public class Part1Driver {
 		System.out.println("Error of ||LU - A||_inf:");
 		// difference = LU - A
 		Matrix difference = (list[0].multiply(list[1])).subtract(matrix);
-		System.out.println(difference.getMaxNorm());
+		System.out.println(difference.getError());
 	}
 
 	public static void caseTwo(Matrix matrix) {
@@ -58,7 +58,7 @@ public class Part1Driver {
 		System.out.println("Error of ||QR - A||_inf:");
 		// difference = QR - A
 		Matrix difference = (list[0].multiply(list[1])).subtract(matrix);
-		System.out.println(difference.getMaxNorm());
+		System.out.println(difference.getError());
 	}
 
 	public static void caseThree(Matrix matrix) {
@@ -68,7 +68,7 @@ public class Part1Driver {
 		System.out.println("Error of ||QR - A||_inf:");
 		// difference = QR - A
 		Matrix difference = matrix.subtract(list[0].multiply(list[1]));
-		System.out.println(difference.getMaxNorm());
+		System.out.println(difference.getError());
 	}
 
 	public static void caseFour(Matrix[] list) {
@@ -78,7 +78,7 @@ public class Part1Driver {
 		System.out.println("Error in ||Ax - b|| using LU decomposition:");
 		// difference = (A * x) - b
 		Matrix difference = (list[0].multiply(x)).subtract(list[1]);
-		System.out.println(difference.getMaxNorm() + "\n");
+		System.out.println(difference.getError() + "\n");
 
 		System.out.println("Solving Ax = b using QR decomposition via Givens rotations. Value of x is below:");
 		x = list[0].solve_qr_b_givens(list[1]);
@@ -86,7 +86,7 @@ public class Part1Driver {
 		System.out.println("Error in ||Ax - b|| using QR decomposition via Givens Rotations:");
 		// difference = (A * x) - b
 		difference = (list[0].multiply(x)).subtract(list[1]);
-		System.out.println(difference.getMaxNorm() + "\n");
+		System.out.println(difference.getError() + "\n");
 
 		System.out.println("Solving Ax = b using QR decomposition via Householder reflections. Value of x is below:");
 		x = list[0].solve_qr_b_househ(list[1]);
@@ -94,7 +94,7 @@ public class Part1Driver {
 		System.out.println("Error in ||Ax - b|| using QR decomposition via Householder reflections:");
 		// difference = (A * x) - b
 		difference = (list[0].multiply(x)).subtract(list[1]);
-		System.out.println(difference.getMaxNorm() + "\n");
+		System.out.println(difference.getError() + "\n");
 	}
 
 	public static void caseFive() throws FileNotFoundException {
@@ -111,10 +111,10 @@ public class Part1Driver {
 			System.out.println("Error in ||LU - H||_inf:");
 			Matrix[] lu = H.lu_fact();
 			Matrix difference = (lu[0].multiply(lu[1])).subtract(H);
-			System.out.println(difference.getMaxNorm());
+			System.out.println(difference.getError());
 			System.out.println("Erorr in ||Hx - b||:");
 			difference = (H.multiply(x)).subtract(b);
-			System.out.println(difference.getMaxNorm() + "\n");
+			System.out.println(difference.getError() + "\n");
 
 			System.out.println("Solution to Hx = b using QR decomposition via Householder reflections:");
 			x = H.solve_qr_b_househ(b);
@@ -122,10 +122,10 @@ public class Part1Driver {
 			System.out.println("Error in ||QR - H||_inf:");
 			Matrix[] qr = H.qr_fact_househ();
 			difference = (qr[0].multiply(qr[1])).subtract(H);
-			System.out.println(difference.getMaxNorm());
+			System.out.println(difference.getError());
 			System.out.println("Erorr in ||Hx - b||:");
 			difference = (H.multiply(x)).subtract(b);
-			System.out.println(difference.getMaxNorm() + "\n");
+			System.out.println(difference.getError() + "\n");
 
 			System.out.println("Solution to Hx = b using QR decomposition via Givens rotations:");
 			x = H.solve_qr_b_givens(b);
@@ -134,11 +134,11 @@ public class Part1Driver {
 			System.out.println("Error in ||QR - H||_inf:");
 			qr = H.qr_fact_givens();
 			difference = (qr[0].multiply(qr[1])).subtract(H);
-			System.out.println(difference.getMaxNorm());
+			System.out.println(difference.getError());
 
 			System.out.println("Erorr in ||Hx - b||:");
 			difference = (H.multiply(x)).subtract(b);
-			System.out.println(difference.getMaxNorm() + "\n");
+			System.out.println(difference.getError() + "\n");
 		}
 	}
 }
