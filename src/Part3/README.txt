@@ -13,4 +13,3 @@ Part 3 of the project can be run by following these steps:
 
 This folder also has the written component for Part 3.
 
-** All code for Part 3 is located within Matrix.java **

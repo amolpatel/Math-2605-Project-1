@@ -19,3 +19,5 @@ When trying to decode y_bar to obtain x_bar, run option 9 for Y0 and option 10 f
 When trying to decode y_bar to obtain x_bar, run option 9 for Y0 and option 10 for Y1 to get a result using Jacobi.
 
 Included in this folder are a PDF and Word document of the written component associated with part 2 (included both in case one is easier to read).
+
+** All code for Part 3 is located within Matrix.java **
