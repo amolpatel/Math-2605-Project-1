@@ -107,4 +107,28 @@ public class FileParser {
 
     }
 
+    public static Matrix parseVectorFileV2(String filePath) throws FileNotFoundException {
+        Scanner file = new Scanner(new File(filePath));
+        // Find dimensions of matrix rows from first line of file
+        int rowDim = 0;
+        double temp;
+
+        while(file.hasNextDouble()){
+            temp = file.nextDouble();
+            rowDim++;
+        }
+        file.close();
+        double[][] vectorArray = new double[rowDim][1];
+        file = new Scanner(new File(filePath));
+        for (int i = 0; i < rowDim; i++) {
+            vectorArray[i][0] = file.nextDouble();
+        }
+        file.close();
+        return (new Matrix (vectorArray));
+
+    }
+
+
+
+
 }
