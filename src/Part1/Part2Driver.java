@@ -15,15 +15,15 @@ public class Part2Driver {
         System.out.println("Welcome to part 2 of the project.");
         while (true) {
             System.out.println("Select an option.");
-            System.out.println("1 - Solve Ax=b using Gauss-Seidel in [A|b] form read from file.");
-            System.out.println("2 - Solve Ax=b using Jacobi in [A|b] form read from file.");
-            System.out.println("3 - Produce output stream Y0 with input stream X read from file.");
-            System.out.println("4 - Produce output stream Y0 with randomly generated input stream X.");
-            System.out.println("5 - Produce output stream Y1 with input stream X read from file.");
-            System.out.println("6 - Produce output stream Y1 with randomly generated input stream X.");
-            System.out.println("7 - Produce full output stream Y with input stream X read from file.");
-            System.out.println("8 - Produce full output stream Y with randomly generated input stream X.");
-            System.out.println("9 - Produce input stream X with output stream Y0 read from file using Gauss-Seidel.");
+            System.out.println("1  - Solve Ax=b using Gauss-Seidel in [A|b] form read from file.");
+            System.out.println("2  - Solve Ax=b using Jacobi in [A|b] form read from file.");
+            System.out.println("3  - Produce output stream Y0 with input stream X read from file.");
+            System.out.println("4  - Produce output stream Y0 with randomly generated input stream X.");
+            System.out.println("5  - Produce output stream Y1 with input stream X read from file.");
+            System.out.println("6  - Produce output stream Y1 with randomly generated input stream X.");
+            System.out.println("7  - Produce full output stream Y with input stream X read from file.");
+            System.out.println("8  - Produce full output stream Y with randomly generated input stream X.");
+            System.out.println("9  - Produce input stream X with output stream Y0 read from file using Gauss-Seidel.");
             System.out.println("10 - Produce input stream X with output stream Y1 read from file using Gauss-Seidel.");
             System.out.println("11 - Produce input stream X with randomly generated output stream Y using Gauss-Seidel.");
             System.out.println("12 - Produce input stream X with output stream Y0 read from file using Jacobi.");
@@ -36,11 +36,13 @@ public class Part2Driver {
                 case 1:
                     Matrix[] augmented = FileParser.parseFileWithB(path);
                     System.out.println("A:\n" + augmented[0]);
+                    System.out.println("B:\n" + augmented[1]);
                     caseOne(augmented);
                     break;
                 case 2:
                     Matrix[] augmented2 = FileParser.parseFileWithB(path);
                     System.out.println("A:\n" + augmented2[0]);
+                    System.out.println("B:\n" + augmented2[1]);
                     caseTwo(augmented2);
                     break;
                 case 3:
@@ -94,7 +96,15 @@ public class Part2Driver {
         Matrix A = list[0];
         Matrix b = list[1];
         Matrix X = b.generateInitial();
+        System.out.println("Please select an option for tolerance:");
+        System.out.println("1 - Use custom");
+        System.out.println("2 - Use default (.000000001)");
         float tol = (float) .000000001;
+        int answer = in.nextInt();
+        if(answer == 1){
+            System.out.println("Please enter tolerance in form: '.xxxxxxxx'");
+            tol = (float) in.nextFloat();
+        }
         System.out.println("Tolerance is: "+tol);
         Matrix result = A.gauss_seidel(b, X, tol);
         System.out.println(result);
@@ -104,7 +114,15 @@ public class Part2Driver {
         Matrix A = list[0];
         Matrix b = list[1];
         Matrix X = b.generateInitial();
+        System.out.println("Please select an option for tolerance:");
+        System.out.println("1 - Use custom");
+        System.out.println("2 - Use default (.000000001)");
         float tol = (float) .000000001;
+        int answer = in.nextInt();
+        if(answer == 1){
+            System.out.println("Please enter tolerance in form: '.xxxxxxxx'");
+            tol = (float) in.nextFloat();
+        }
         System.out.println("Tolerance is: "+tol);
         Matrix result = A.jacobi(b, X, tol);
         System.out.println(result);
@@ -182,7 +200,15 @@ public class Part2Driver {
         System.out.println("Y:\n" + Y);
         Matrix A = Y.getA0();
         Matrix guess = Y.generateInitial();
+        System.out.println("Please select an option for tolerance:");
+        System.out.println("1 - Use custom");
+        System.out.println("2 - Use default (.000000001)");
         float tol = (float) .000000001;
+        int answer = in.nextInt();
+        if(answer == 1){
+            System.out.println("Please enter tolerance in form: '.xxxxxxxx'");
+            tol = (float) in.nextFloat();
+        }
         System.out.println("Tolerance is: "+tol);
         Matrix X = A.gauss_seidel(Y,guess, tol);
         System.out.println("X:\n" + X);
@@ -193,7 +219,15 @@ public class Part2Driver {
         System.out.println("Y:\n" + Y);
         Matrix A = Y.getA1();
         Matrix guess = Y.generateInitial();
+        System.out.println("Please select an option for tolerance:");
+        System.out.println("1 - Use custom");
+        System.out.println("2 - Use default (.000000001)");
         float tol = (float) .000000001;
+        int answer = in.nextInt();
+        if(answer == 1){
+            System.out.println("Please enter tolerance in form: '.xxxxxxxx'");
+            tol = (float) in.nextFloat();
+        }
         System.out.println("Tolerance is: "+tol);
         Matrix X = A.gauss_seidel(Y,guess, tol);
         System.out.println("X:\n" + X);
@@ -217,7 +251,15 @@ public class Part2Driver {
             System.out.println(A);
         }
         Matrix guess = Y.generateInitial();
+        System.out.println("Please select an option for tolerance:");
+        System.out.println("1 - Use custom");
+        System.out.println("2 - Use default (.000000001)");
         float tol = (float) .000000001;
+        int answer = in.nextInt();
+        if(answer == 1){
+            System.out.println("Please enter tolerance in form: '.xxxxxxxx'");
+            tol = (float) in.nextFloat();
+        }
         System.out.println("Tolerance is: "+tol);
         Matrix X = A.gauss_seidel(Y, guess, tol);
         System.out.println("X:\n" + X);
@@ -228,7 +270,15 @@ public class Part2Driver {
         System.out.println("Y:\n" + Y);
         Matrix A = Y.getA0();
         Matrix guess = Y.generateInitial();
+        System.out.println("Please select an option for tolerance:");
+        System.out.println("1 - Use custom");
+        System.out.println("2 - Use default (.000000001)");
         float tol = (float) .000000001;
+        int answer = in.nextInt();
+        if(answer == 1){
+            System.out.println("Please enter tolerance in form: '.xxxxxxxx'");
+            tol = (float) in.nextFloat();
+        }
         System.out.println("Tolerance is: "+tol);
         Matrix X = A.jacobi(Y, guess, tol);
         System.out.println("X:\n" + X);
@@ -239,7 +289,15 @@ public class Part2Driver {
         System.out.println("Y:\n" + Y);
         Matrix A = Y.getA1();
         Matrix guess = Y.generateInitial();
+        System.out.println("Please select an option for tolerance:");
+        System.out.println("1 - Use custom");
+        System.out.println("2 - Use default (.000000001)");
         float tol = (float) .000000001;
+        int answer = in.nextInt();
+        if(answer == 1){
+            System.out.println("Please enter tolerance in form: '.xxxxxxxx'");
+            tol = (float) in.nextFloat();
+        }
         System.out.println("Tolerance is: "+tol);
         Matrix X = A.jacobi(Y, guess, tol);
         System.out.println("X:\n" + X);
@@ -249,9 +307,9 @@ public class Part2Driver {
         System.out.println("Please enter desired length of Y");
         Matrix Y = Matrix.getYStream(in.nextInt());
         System.out.println("Y:\n" + Y);
-        System.out.println("Please choose which A you would like to use:");
-        System.out.println("1 - A0");
-        System.out.println("2 - A1");
+        System.out.println("Please choose which Y you have entered in order to choose correct A:");
+        System.out.println("1 - Y0/A0");
+        System.out.println("2 - Y1/A1");
         Matrix A =null;
         if(in.nextInt() == 1){
             System.out.println("Using A0:");
@@ -263,7 +321,15 @@ public class Part2Driver {
             System.out.println(A);
         }
         Matrix guess = Y.generateInitial();
+        System.out.println("Please select an option for tolerance:");
+        System.out.println("1 - Use custom");
+        System.out.println("2 - Use default (.000000001)");
         float tol = (float) .000000001;
+        int answer = in.nextInt();
+        if(answer == 1){
+            System.out.println("Please enter tolerance in form: '.xxxxxxxx'");
+            tol = (float) in.nextFloat();
+        }
         System.out.println("Tolerance is: "+tol);
         Matrix X = A.jacobi(Y, guess, tol);
         System.out.println("X:\n" + X);
