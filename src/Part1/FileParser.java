@@ -34,10 +34,10 @@ public class FileParser {
         // Parse remainder of file and add to double array
         for (int i = 1; i < matrixDim; i++)
         {
-            line = file.nextLine();
+        	line = file.nextLine();
             for (int j = 0; j < matrixDim; j++)
             {
-                stringArray = line.split(",| ");
+            	stringArray = line.split(",| ");
                 doubleArray[i][j] = Double.parseDouble(stringArray[j]);
             }
         }
@@ -57,7 +57,7 @@ public class FileParser {
      * @throws FileNotFoundException
      */
     public static Matrix[] parseFileWithB(String filePath) throws FileNotFoundException {
-        Scanner file = new Scanner(new File(filePath));
+    	Scanner file = new Scanner(new File(filePath));
         String line = file.nextLine();
         // Find dimensions of matrix from first line of file
         String[] stringArray = line.split(",| ");
@@ -67,17 +67,17 @@ public class FileParser {
         double[][] vectorArray = new double[matrixDim][1];
         // Copy first row of text file into arrays
         for (int i = 0; i < matrixDim; i++)
-            matrixArray[0][i] = Double.parseDouble(stringArray[i]);
+        	matrixArray[0][i] = Double.parseDouble(stringArray[i]);
         vectorArray[0][0] = Double.parseDouble(stringArray[matrixDim]);
 
         // Parse remainder of file and add to double both arrays
         int j;
         for (int i = 1; i < matrixDim; i++)
         {
-            line = file.nextLine();
+        	line = file.nextLine();
             for (j = 0; j < matrixDim; j++)
             {
-                stringArray = line.split(",| ");
+            	stringArray = line.split(",| ");
                 matrixArray[i][j] = Double.parseDouble(stringArray[j]);
             }
             vectorArray[i][0] = Double.parseDouble(stringArray[j]);

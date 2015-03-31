@@ -1,25 +1,24 @@
-import java.util.Random;
 
 /**
  * Matrix class can be used to represent a matrix or vector as
  * a two dimensional array and supports various operations
  */
 public class Matrix {
-    private double[][] matrix;
-    private final int numRows;
-    private final int numCols;
+	private double[][] matrix;
+	private final int numRows;
+	private final int numCols;
 
-    public Matrix(int rows, int cols) {
-        matrix = new double[rows][cols];
-        numRows = rows;
-        numCols = cols;
-    }
+	public Matrix(int rows, int cols) {
+		matrix = new double[rows][cols];
+		numRows = rows;
+		numCols = cols;
+	}
 
-    public Matrix(double[][] array) {
-        this.matrix = array;
-        numRows = matrix.length;
-        numCols = matrix[0].length;
-    }
+	public Matrix(double[][] array) {
+		this.matrix = array;
+		numRows = matrix.length;
+		numCols = matrix[0].length;
+	}
 
     public int getRows(){
         return this.numRows;
@@ -81,151 +80,162 @@ public class Matrix {
         return result;
     }
 
-    /**
-     * @return dot product of two vectors
-     */
-    public Matrix dotProduct(Matrix m) { return multiply(m); }
+	/**
+	 * @return dot product of two vectors
+	 */
+	public Matrix dotProduct(Matrix m) { return multiply(m); }
 
-    /**
-     * @return transpose of matrix
-     */
-    public Matrix transpose() {
-        Matrix result = new Matrix(numCols, numRows);
-        for (int i = 0; i < numRows; i++)
-            for (int j = 0; j < numCols; j++)
-                result.matrix[j][i] = matrix[i][j];
-        return result;
-    }
+	/**
+	 * @return transpose of matrix
+	 */
+	public Matrix transpose() {
+		Matrix result = new Matrix(numCols, numRows);
+		for (int i = 0; i < numRows; i++)
+			for (int j = 0; j < numCols; j++)
+				result.matrix[j][i] = matrix[i][j];
+		return result;
+	}
 
-    /**
-     * Performs LU decomposition of matrix
-     * Worked out examples of how to calculate LU decomposition are at the following link
-     * https://files.t-square.gatech.edu/access/content/group/gtc-1e04-e0d7-51e4-a454-b328339e73da/examples_LU_Householder.pdf
-     * @return matrices l and u
-     */
-    public Matrix[] lu_fact() {
-        // Can LU factorization happen on non-square matrices? Account for this at some point.
-        Matrix l = getIdentityMatrix(numRows);
-        // Copy original matrix into u for row reduction and to avoid changing original matrix
-        Matrix u = new Matrix(numRows, numCols);
-        for (int i = 0; i < numRows; i++)
-            System.arraycopy(matrix[i], 0, u.matrix[i], 0, numCols);
+	/**
+	 * Performs LU decomposition of matrix
+	 * Worked out examples of how to calculate LU decomposition are at the following link
+	 * https://files.t-square.gatech.edu/access/content/group/gtc-1e04-e0d7-51e4-a454-b328339e73da/examples_LU_Householder.pdf
+	 * @return matrices l and u
+	 */
+	public Matrix[] lu_fact() {
+		// Can LU factorization happen on non-square matrices? Account for this at some point.
+		Matrix l = getIdentityMatrix(numRows);
+		// Copy original matrix into u for row reduction and to avoid changing original matrix
+		Matrix u = new Matrix(numRows, numCols);
+		for (int i = 0; i < numRows; i++)
+			System.arraycopy(matrix[i], 0, u.matrix[i], 0, numCols);
 
-        for (int j = 0; j < numCols - 1; j++)
-            for (int i = j + 1; i < numRows; i++)
-                if (u.matrix[i][j] != 0)
-                {
-                    double scalar = u.matrix[i][j]/u.matrix[j][j];
-                    // Putting scalar in l because this is equivalent to the inverse of the matrix G_n at each step
-                    l.matrix[i][j] = scalar;
-                    u.rowOperation(j, i, scalar);
-                }
-        Matrix[] list = new Matrix[2];
-        list[0] = l;
-        list[1] = u;
-        return list;
-    }
+		for (int j = 0; j < numCols - 1; j++)
+			for (int i = j + 1; i < numRows; i++)
+				if (u.matrix[i][j] != 0)
+				{
+					double scalar = u.matrix[i][j]/u.matrix[j][j];
+					// Putting scalar in l because this is equivalent to the inverse of the matrix G_n at each step
+					l.matrix[i][j] = scalar;
+					u.rowOperation(j, i, scalar);
+				}
+		Matrix[] list = new Matrix[2];
+		list[0] = l;
+		list[1] = u;
+		return list;
+	}
 
-    /**
-     * Solves Ax = b where A = LU
-     * @param b matrix used when solving for x
-     * @return matrix solution of system
-     */
-    public Matrix solve_lu_b(Matrix b) {
-        Matrix[] list = this.lu_fact();
-        // Solve Ly = b using forward substitution since L is an lower triangular matrix
-        Matrix y = forwardSubstitution(list[0], b);
-        // Solve Ux = y using backwards substitution since U is a upper triangular matrix
-        Matrix x = backwardSubstitution(list[1], y);
-        return x;
-    }
+	/**
+	 * Solves Ax = b where A = LU
+	 * @param b matrix used when solving for x
+	 * @return matrix solution of system
+	 */
+	public Matrix solve_lu_b(Matrix b) {
+		Matrix[] list = this.lu_fact();
+		// Solve Ly = b using forward substitution since L is an lower triangular matrix
+		Matrix y = list[0].forwardSubstitution(b);
+		// Solve Ux = y using backwards substitution since U is a upper triangular matrix
+		Matrix x = list[1].backwardSubstitution(y);
+		return x;
+	}
 
-    public Matrix solve_qr_b_givens(Matrix b) {
-        Matrix[] list = this.qr_fact_givens();
-        Matrix x = backwardSubstitution(list[1], list[0].transpose().multiply(b));
-        return x;
-    }
+	/**
+	 * Solves system Ax = b using Givens rotations where A is a n by n matrix and b is a n by 1 matrix
+	 * @param b vector to solve equation with
+	 * @return solution vector to system
+	 */
+	public Matrix solve_qr_b_givens(Matrix b) {
+		Matrix[] list = this.qr_fact_givens();
+		Matrix x = list[1].backwardSubstitution(list[0].transpose().multiply(b));
+		return x;
+	}
 
-    public Matrix solve_qr_b_househ(Matrix b) {
-        Matrix[] list = this.qr_fact_househ();
-        Matrix x = backwardSubstitution(list[1], list[0].transpose().multiply(b));
-        return x;
-    }
+	public Matrix solve_qr_b_househ(Matrix b) {
+		Matrix[] list = this.qr_fact_househ();
+		Matrix x = backwardSubstitution(list[1], list[0].transpose().multiply(b));
+		return x;
+	}
 
-    /**
-     * Solves equation Ax = b
-     * @param a lower triangular, n by n matrix
-     * @param b n by 1 vector
-     * @return matrix solution of system
-     */
-    private Matrix forwardSubstitution(Matrix a, Matrix b) {
-        Matrix x = new Matrix(a.numCols, 1);
-        double total;
-        for (int i = 0; i < a.numCols; i++)
-        {
-            total = 0;
-            for (int j = 0; j < i; j++)
-                total += a.matrix[i][j] * x.matrix[j][0];
-            double x_n = (b.matrix[i][0] - total) / a.matrix[i][i];
-            x.matrix[i][0] = x_n;
-        }
-        return x;
-    }
+	/**
+	 * Solves equation Ax = b using forward substitution
+	 * @param a upper triangular, n by n matrix
+	 * @param b n by 1 vector
+	 * @return matrix solution of system
+	 */
+	private Matrix forwardSubstitution(Matrix b) {
+		Matrix x = new Matrix(numCols, 1);
+		double total;
+		for (int i = 0; i < numCols; i++)
+		{
+			total = 0;
+			for (int j = 0; j < i; j++)
+				total += matrix[i][j] * x.matrix[j][0];
+			double x_n = (b.matrix[i][0] - total) / matrix[i][i];
+			x.matrix[i][0] = x_n;
+		}
+		return x;
+	}
 
-    private Matrix backwardSubstitution(Matrix a, Matrix b) {
-        Matrix x = new Matrix(a.numCols, 1);
-        double total;
-        for (int i = a.numCols - 1; i >= 0; i--)
-        {
-            total = 0;
-            for (int j = a.numCols - 1; j > i; j--)
-                total += a.matrix[i][j] * x.matrix[j][0];
-            double x_n = (b.matrix[i][0] - total) / a.matrix[i][i];
-            x.matrix[i][0] = x_n;
-        }
-        return x;
-    }
+	/**
+	 * Solves equation Ax = b using backward substitution
+	 * @param a lower triangular, n by n matrix
+	 * @param b n by 1 vector
+	 * @return matrix solution of system
+	 */
+	private Matrix backwardSubstitution(Matrix b) {
+		Matrix x = new Matrix(numCols, 1);
+		double total;
+		for (int i = numCols - 1; i >= 0; i--)
+		{
+			total = 0;
+			for (int j = numCols - 1; j > i; j--)
+				total += matrix[i][j] * x.matrix[j][0];
+			double x_n = (b.matrix[i][0] - total) / matrix[i][i];
+			x.matrix[i][0] = x_n;
+		}
+		return x;
+	}
 
-    /**
-     * Performs a QR factorization of a square matrix using Givens Rotations where
-     * Q = (G_1)^t * (G_2)^t * (G_m)^t where ^t indicates a transpose of a matrix
-     * R = G_m * ... * G_2 * G_1 * A
-     * Worked out example of how to perform this calculation is on page 9 of the following link
-     * https://files.t-square.gatech.edu/access/content/group/gtc-1e04-e0d7-51e4-a454-b328339e73da/2605classnotesWeek6_b.pdf
-     * @return matrices Q and R
-     */
-    public Matrix[] qr_fact_givens() {
-        // Can QR factorization using Givens be done on non-square matrices?
-        Matrix q = null;
-        // Copy original matrix into r for row reduction and to avoid changing original matrix
-        Matrix r = new Matrix(matrix);
-        for (int j = 0; j < numCols; j++)
-            for (int i = j + 1; i < numRows; i++)
-                if (r.matrix[i][j] != 0)
-                {
-                    double x = r.matrix[j][j];
-                    double y = r.matrix[i][j];
-                    // cos theta = x/sqrt(x^2 + y^2)
-                    double cosTheta = x / (Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2)));
-                    // sin theta = -y/sqrt(x^2 + y^2)
-                    double sinTheta = -y / (Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2)));
-                    Matrix g = getIdentityMatrix(numRows);
-                    g.matrix[i][i] = cosTheta;
-                    g.matrix[j][j] = cosTheta;
-                    g.matrix[i][j] = sinTheta;
-                    g.matrix[j][i] = -sinTheta;
-                    r = g.multiply(r);
-                    // Sets q equal to "G_1" the first time the loop runs, otherwise calculates q as it should
-                    if (q == null)
-                        q = g.transpose();
-                    else
-                        q = q.multiply(g.transpose());
-                }
-        Matrix[] list = new Matrix[2];
-        list[0] = q;
-        list[1] = r;
-        return list;
-    }
+	/**
+	 * Performs a QR factorization of a square matrix using Givens Rotations where
+	 * Q = (G_1)^t * (G_2)^t * (G_m)^t where ^t indicates a transpose of a matrix
+	 * R = G_m * ... * G_2 * G_1 * A
+	 * Worked out example of how to perform this calculation is on page 9 of the following link
+	 * https://files.t-square.gatech.edu/access/content/group/gtc-1e04-e0d7-51e4-a454-b328339e73da/2605classnotesWeek6_b.pdf
+	 * @return matrices Q and R
+	 */
+	public Matrix[] qr_fact_givens() {
+		// Can QR factorization using Givens be done on non-square matrices?
+		Matrix q = null;
+		// Copy original matrix into r for row reduction and to avoid changing original matrix
+		Matrix r = new Matrix(matrix);
+		for (int j = 0; j < numCols; j++)
+			for (int i = j + 1; i < numRows; i++)
+				if (r.matrix[i][j] != 0)
+				{
+					double x = r.matrix[j][j];
+					double y = r.matrix[i][j];
+					// cos theta = x/sqrt(x^2 + y^2)
+					double cosTheta = x / (Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2)));
+					// sin theta = -y/sqrt(x^2 + y^2)
+					double sinTheta = -y / (Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2)));
+					Matrix g = getIdentityMatrix(numRows);
+					g.matrix[i][i] = cosTheta;
+					g.matrix[j][j] = cosTheta;
+					g.matrix[i][j] = sinTheta;
+					g.matrix[j][i] = -sinTheta;
+					r = g.multiply(r);
+					// Sets q equal to "G_1" the first time the loop runs, otherwise calculates q as it should
+					if (q == null)
+						q = g.transpose();
+					else
+						q = q.multiply(g.transpose());
+				}
+		Matrix[] list = new Matrix[2];
+		list[0] = q;
+		list[1] = r;
+		return list;
+	}
 
     /**
      * Performs QR factorization of a square matrix using HouseHolder Reflections where
@@ -237,31 +247,35 @@ public class Matrix {
      */
     public Matrix[] qr_fact_househ(){
         Matrix q = null;
-        Matrix r = new Matrix(matrix);
-        for(int j = 0; j < numCols; j++)
-            for(int i = j + 1; i < numRows; i++)
-                if(((double)Math.round(r.matrix[i][j] * 100000) / 100000) != 0) {
-                    Matrix x = getX(r, i - 1, j);
-                    Matrix v = getV(x);
-                    Matrix u = getU(v);
-                    Matrix Ut = u.transpose();
-                    Matrix UUt = u.multiply(Ut);
-                    Matrix twoUUt = UUt.multiply(2);
-                    Matrix I = getIdentityMatrix(twoUUt.numRows);
-                    Matrix h = I.subtract(twoUUt);
+        // Copy original matrix into r for row reduction and to avoid changing original matrix
+        Matrix r = new Matrix(numRows, numCols);
+        for (int i = 0; i < numRows; i++)
+            System.arraycopy(matrix[i], 0, r.matrix[i], 0, numCols);
 
-                    if(!h.haveEqualDimensions(r))
-                        h = padH(h,r);
+        for (int j = 0; j < numCols; j++)
+            for (int i = j + 1; i < numRows; i++)
+                if (Math.abs(r.matrix[i][j]) > 1E-15)
+                {
+                    Matrix x_n = new Matrix(numRows - j, 1);
+                    for (int k = 0, count = 0; j + k < r.numRows; k++, count++)
+                        x_n.matrix[count][0] = r.matrix[j + k][j];
+                    double x_n_norm = x_n.getNorm();
+                    x_n.matrix[0][0] -= x_n_norm;
+                    x_n_norm = x_n.getNorm();
+                    Matrix u_n = x_n.multiply(1 / x_n_norm);
+                    Matrix identity = getIdentityMatrix(u_n.numRows);
+                    Matrix rightStuff = u_n.multiply(u_n.transpose()).multiply(2);
+                    Matrix result = identity.subtract(rightStuff);
+                    Matrix padded = padH(result, getIdentityMatrix(r.numRows));
+                    r = padded.multiply(r);
+                    // Sets q equal to "H_n" the first time the loop runs, otherwise calculates q as it should
+                    if (q == null)
+                        q = padded;
+                    else
+                        q = q.multiply(padded);
+                } else
+                    r.matrix[i][j] = 0;
 
-                    if (q == null) {
-                        q = h;
-                        r = h.multiply(r);
-                    } else {
-                        q = q.multiply(h);
-                        r = h.multiply(r);
-                    }
-
-                }
         Matrix[] list = new Matrix[2];
         list[0] = q;
         list[1] = r;
@@ -269,16 +283,17 @@ public class Matrix {
     }
 
     /**
-     * Finds a norm of a vector given as array
+     * The norm of a vector is defined as the square root of the result of adding each entry in the vector squared
+     * For example, the vector [x_1, x_2, x_3] has a norm defined as sqrt((x_1)^2 + (x_2)^2 + (x_3)^2)
      * @return norm of vector
      */
-    public double getNorm(Matrix m){
-        double result = 0;
-
-        for(int i = 0; i < m.numRows; i++)
-            result += Math.pow(m.matrix[i][0], 2);
-        result = Math.sqrt(result);
-        return result;
+    public double getNorm() {
+    	if (this.numCols != 1)
+    		throw new IllegalArgumentException("Matrix must be an n by 1 matrix.");
+    	double total = 0;
+    	for (int i = 0; i < numRows; i++)
+			total += Math.pow(matrix[i][0], 2);
+    	return Math.sqrt(total);
     }
 
     /**
@@ -292,9 +307,10 @@ public class Matrix {
     }
 
     /**
-     * Returns v vector in HouseHolder
-     * v = x + e * norm(x)
-     * @return vector e
+     * Places matrix passed as parameter inside an identity matrix; used for constructing H
+     * matrices in Householder reflections. The matrix will be placed in the lower right hand
+     * corner of the identity matrix
+     * @return identity matrix containing vector h
      */
     public Matrix getV(Matrix x){
         Matrix v;
@@ -326,17 +342,31 @@ public class Matrix {
     }
 
     /**
-     * Pad h vector with identity
-     *
+     * For the purpose of this project, the error is described as the matrix entry with the highest absolute value
+     * @return max norm
      */
-    public Matrix padH(Matrix h, Matrix r){
-        Matrix returnMatrix;
-        returnMatrix = getIdentityMatrix(r.numRows);
-        int rowDiff = r.numCols - h.numCols;
-        for(int i = rowDiff; i < numRows; i++)
-            for(int j = rowDiff; j < numCols; j++)
-                returnMatrix.matrix[i][j] = h.matrix[i - rowDiff][j - rowDiff];
-        return returnMatrix;
+    public double getError() {
+        // Initialize variable with some value in matrix
+        double max = Math.abs(matrix[0][0]);
+        for (int i = 0; i < numRows; i++)
+            for (int j = 0; j < numCols; j++)
+                if (Math.abs(matrix[i][j]) > max)
+                    max = Math.abs(matrix[i][j]);
+        return max;
+    }
+
+    /**
+     * Places matrix passed as parameter inside an identity matrix; used for constructing H
+     * matrices in Householder reflections. The matrix will be placed in the lower right hand
+     * corner of the identity matrix
+     * @return identity matrix containing vector h
+     */
+    private Matrix padH(Matrix innerMatrix, Matrix identity) {
+        int dimDiff = identity.numCols - innerMatrix.numCols;
+        for(int i = dimDiff; i < identity.numRows; i++)
+            for (int j = dimDiff; j < identity.numCols; j++)
+                identity.matrix[i][j] = innerMatrix.matrix[i - dimDiff][j - dimDiff];
+        return identity;
     }
 
     /**
@@ -366,18 +396,18 @@ public class Matrix {
         return hilbert;
     }
 
-    /**
-     * An identity matrix is defined as a matrix with n rows and columns with a diagonal of 1s
-     * Method returns a two dimensional representation of the array
-     * @param dim dimensions of array
-     * @return identity array
-     */
-    public static Matrix getIdentityMatrix(int dim) {
-        Matrix identity = new Matrix(dim, dim);
-        for (int i = 0; i < dim; i++)
-            identity.matrix[i][i] = 1;
-        return identity;
-    }
+	/**
+	 * An identity matrix is defined as a matrix with n rows and columns with a diagonal of 1s
+	 * Method returns a two dimensional representation of the array
+	 * @param dim dimensions of array
+	 * @return identity array
+	 */
+	public static Matrix getIdentityMatrix(int dim) {
+		Matrix identity = new Matrix(dim, dim);
+		for (int i = 0; i < dim; i++)
+			identity.matrix[i][i] = 1;
+		return identity;
+	}
 
     /**
      * Generate A0
@@ -469,7 +499,7 @@ public class Matrix {
      * @return vector with all 0's length as A and b
      */
     public Matrix generateInitial(){
-       Matrix result = new Matrix(this.getRows(),1);
+        Matrix result = new Matrix(this.getRows(),1);
         for(int i = 0; i < this.getRows()-1; i++){
             result.matrix[i][0] = 0.0;
         }
@@ -641,22 +671,6 @@ public class Matrix {
         return result;
     }
 
-    /**
-     * Flip binary matrix
-     */
-    public Matrix flip(){
-        for(int i = 0; i < this.numRows; i++){
-            for(int j = 0; j < this.numCols; j++){
-                if(this.matrix[i][j] == 1.00){
-                    this.matrix[i][j] = 0.00;
-                }else{
-                    this.matrix[i][j] = 1.00;
-                }
-            }
-        }
-        return this;
-    }
-
 
     /**
      * Check if Matrix is binary matrix
@@ -720,43 +734,43 @@ public class Matrix {
         return result;
     }
 
-    @Override
-    public String toString() {
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < numRows; i++)
-        {
-            for (int j = 0; j < numCols; j++)
-                sb.append(matrix[i][j] + "\t\t\t");
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		for (int i = 0; i < numRows; i++)
+		{
+			for (int j = 0; j < numCols; j++)
+				sb.append(matrix[i][j] + "\t\t\t");
 
-            sb.append("\n");
-        }
-        return sb.toString();
-    }
+			sb.append("\n");
+		}
+		return sb.toString();
+	}
 
-    /**
-     * Performs row operation on array based on parameters
-     * @param array array on which row operation is being performed
-     * @param pivot pivot row of array
-     * @param row row whose values are being changed
-     * @param scalar number to multiply the pivot row by and add to specified row
-     * @return result of row operation
-     */
-    private void rowOperation(int pivot, int row, double scalar) {
-        for (int j = 0; j < matrix[0].length; j++)
-            matrix[row][j] += (matrix[pivot][j] * scalar * -1);
-    }
+	/**
+	 * Performs row operation on array based on parameters
+	 * @param array array on which row operation is being performed
+	 * @param pivot pivot row of array
+	 * @param row row whose values are being changed
+	 * @param scalar number to multiply the pivot row by and add to specified row
+	 * @return result of row operation
+	 */
+	private void rowOperation(int pivot, int row, double scalar) {
+		for (int j = 0; j < matrix[0].length; j++)
+			matrix[row][j] += (matrix[pivot][j] * scalar * -1);
+	}
 
-    /**
-     * @return true if two matrices have an equal number of rows and columns
-     */
-    private boolean haveEqualDimensions(Matrix m) {
-        return ((this.numRows == m.numRows) && (this.numCols == m.numCols));
-    }
+	/**
+	 * @return true if two matrices have an equal number of rows and columns
+	 */
+	private boolean haveEqualDimensions(Matrix m) {
+		return ((this.numRows == m.numRows) && (this.numCols == m.numCols));
+	}
 
-    /**
-     * @return true if number of rows in A is equal to number of columns in B
-     */
-    private boolean checkDims(Matrix m) {
-        return (this.numCols == m.numRows);
-    }
+	/**
+	 * @return true if number of rows in A is equal to number of columns in B
+	 */
+	private boolean checkDims(Matrix m) {
+		return (this.numCols == m.numRows);
+	}
 }
