@@ -4,6 +4,7 @@ import java.io.FileNotFoundException;
 import java.util.Scanner;
 import Part1.FileParser;
 import Part1.Matrix;
+import java.lang.*;
 
 public class Part2Driver {
     static Scanner in = new Scanner(System.in);
@@ -31,62 +32,96 @@ public class Part2Driver {
             System.out.println("12 - Produce input stream X with output stream Y0 read from file using Jacobi.");
             System.out.println("13 - Produce input stream X with output stream Y1 read from file using Jacobi.");
             System.out.println("14 - Produce input stream X with randomly generated output stream Y using Jacobi.");
+            System.out.println("To quit, enter 0");
             input = in.nextInt();
-            System.out.println("Enter file path. If a file path is not required, just enter any character to move on.");
-            path = in.next();
+            if(input == 0){
+                break;
+            }
             switch (input) {
                 case 1:
+                    System.out.println("Enter file path. If a file path is not required, just enter any character to move on.");
+                    path = in.next();
                     Matrix[] augmented = FileParser.parseFileWithB(path);
-                    System.out.println("Your input:\n");
+                    System.out.println("Your input:");
                     System.out.println("A:\n" + augmented[0]);
                     System.out.println("B:\n" + augmented[1]);
                     caseOne(augmented);
                     break;
                 case 2:
+                    System.out.println("Enter file path. If a file path is not required, just enter any character to move on.");
+                    path = in.next();
                     Matrix[] augmented2 = FileParser.parseFileWithB(path);
-                    System.out.println("Your input:\n");
+                    System.out.println("Your input:");
                     System.out.println("A:\n" + augmented2[0]);
                     System.out.println("B:\n" + augmented2[1]);
                     caseTwo(augmented2);
                     break;
                 case 3:
+                    System.out.println("Enter file path. If a file path is not required, just enter any character to move on.");
+                    path = in.next();
                     Matrix augmented3 = FileParser.parseVectorFileV2(path);
+                    System.out.println("Your input:");
+                    System.out.println(augmented3);
                     caseThree(augmented3);
                     break;
                 case 4:
                     caseFour();
                     break;
                 case 5:
+                    System.out.println("Enter file path. If a file path is not required, just enter any character to move on.");
+                    path = in.next();
                     Matrix augmented5 = FileParser.parseVectorFileV2(path);
+                    System.out.println("Your input:");
+                    System.out.println(augmented5);
                     caseFive(augmented5);
                     break;
                 case 6:
                     caseSix();
                     break;
                 case 7:
+                    System.out.println("Enter file path. If a file path is not required, just enter any character to move on.");
+                    path = in.next();
                     Matrix augmented7 = FileParser.parseVectorFileV2(path);
+                    System.out.println("Your input:");
+                    System.out.println(augmented7);
                     caseSeven(augmented7);
                     break;
                 case 8:
                     caseEight();
                     break;
                 case 9:
+                    System.out.println("Enter file path. If a file path is not required, just enter any character to move on.");
+                    path = in.next();
                     Matrix augmented9 = FileParser.parseVectorFileV2(path);
+                    System.out.println("Your input:");
+                    System.out.println(augmented9);
                     caseNine(augmented9);
                     break;
                 case 10:
+                    System.out.println("Enter file path. If a file path is not required, just enter any character to move on.");
+                    path = in.next();
                     Matrix augmented10 = FileParser.parseVectorFileV2(path);
+                    System.out.println("Your input:");
+                    System.out.println(augmented10);
                     caseTen(augmented10);
                     break;
                 case 11:
                     caseEleven();
                     break;
                 case 12:
+                    System.out.println("Enter file path. If a file path is not required, just enter any character to move on.");
+                    path = in.next();
                     Matrix augmented12 = FileParser.parseVectorFileV2(path);
+                    System.out.println("Your input:");
+                    System.out.println(augmented12);
                     caseTwelve(augmented12);
                     break;
                 case 13:
+                    System.out.println("Enter file path. If a file path is not required, just enter any character to move on.");
+                    path = in.next();
                     Matrix augmented13 = FileParser.parseVectorFileV2(path);
+                    System.out.println("Your input:");
+                    System.out.println(augmented13);
                     caseThirteen(augmented13);
                     break;
                 case 14:
@@ -342,6 +377,4 @@ public class Part2Driver {
         Matrix X = A.jacobi(Y, guess, tol);
         System.out.println("X:\n" + X);
     }
-
-
 }
