@@ -525,7 +525,6 @@ public class Matrix {
                 RHS = RHS.add(b);
                 x_k_1 = LHS.forwardSubstitution(RHS);
                 error = checkError(x_k,x_k_1) < tol;
-                System.out.println("ERROR:" + checkError(x_k,x_k_1));
                 if(error){
                     System.out.println("Method converges after "+iterations+" iteration(s).");
                     return (x_k_1.finalMod());
@@ -541,7 +540,6 @@ public class Matrix {
                 RHS = RHS.add(b);
                 x_k_1 = LHS.forwardSubstitution(RHS);
                 error = checkError(x_k,x_k_1) < tol;
-                System.out.println("ERROR:" + checkError(x_k,x_k_1));
                 if(error){
                     System.out.println("Method converges after "+iterations+" iteration(s).");
                     return (x_k_1);
@@ -584,7 +582,6 @@ public class Matrix {
                 RHS = RHS.add(b);
                 x_k_1 = LHS.forwardSubstitution(RHS);
                 error = checkError(x_k,x_k_1) < tol;
-                System.out.println("ERROR:" + checkError(x_k,x_k_1));
                 if(error){
                     System.out.println("Method converges after "+iterations+" iteration(s).");
                     return (x_k_1.finalMod());
@@ -600,8 +597,7 @@ public class Matrix {
                 RHS = RHS.multiply(x_k);
                 RHS = RHS.add(b);
                 x_k_1 = LHS.forwardSubstitution(RHS);
-                error = checkError(x_k,x_k_1) < tol;
-                System.out.println("ERROR:" + checkError(x_k,x_k_1));
+                error = checkError(x_k,x_k_1) < tol;;
                 if(error){
                     System.out.println("Method converges after "+iterations+" iteration(s).");
                     return (x_k_1);
