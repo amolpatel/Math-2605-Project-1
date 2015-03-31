@@ -1,5 +1,4 @@
 package Part1;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
@@ -91,19 +90,29 @@ public class FileParser {
         return list;
     }
 
-     /**
-      *1
-      *2
-      *3
-      */
-     public static double[][] parseVectorFile(String filePath, int rowDim) throws FileNotFoundException {
-	Scanner file = new Scanner(new File(filePath));
+    /**
+     *1
+     *2
+     *3
+     */
+    public static Matrix parseVectorFile(String filePath) throws FileNotFoundException {
+        Scanner file = new Scanner(new File(filePath));
         // Find dimensions of matrix rows from first line of file
-   	double[][] vectorArray = new double[rowDim][1];
-	for (int i = 0; i < rowDim; i++)
-		vectorArray[i][0] = file.nextDouble();
-	file.close();
-	return vectorArray;
+        int rowDim = 0;
+        double temp;
+
+        while(file.hasNextDouble()){
+            temp = file.nextDouble();
+            rowDim++;
+        }
+        file.close();
+        double[][] vectorArray = new double[rowDim][1];
+        file = new Scanner(new File(filePath));
+        for (int i = 0; i < rowDim; i++) {
+            vectorArray[i][0] = file.nextDouble();
+        }
+        file.close();
+        return (new Matrix (vectorArray));
 
     }
 
