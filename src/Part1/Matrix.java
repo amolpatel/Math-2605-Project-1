@@ -1,5 +1,5 @@
 package Part1;
-import java.util.Random;
+
 /**
  * Matrix class can be used to represent a matrix or vector as
  * a two dimensional array and supports various operations
@@ -21,65 +21,61 @@ public class Matrix {
 		numCols = matrix[0].length;
 	}
 
-    public int getRows(){
-        return this.numRows;
-    }
+	/**
+	 * @return matrix result of adding two matrices together
+	 */
+	public Matrix add(Matrix m) {
+		if (!haveEqualDimensions(m))
+			throw new IllegalArgumentException("Matrices cannot be added.");
 
-    /**
-     * @return matrix result of adding two matrices together
-     */
-    public Matrix add(Matrix m) {
-        if (!haveEqualDimensions(m))
-            throw new IllegalArgumentException("Matrices cannot be added.");
+		Matrix result = new Matrix(numRows, numCols);
+		for (int i = 0; i < numRows; i++)
+			for (int j = 0; j < numCols; j++)
+				result.matrix[i][j] = this.matrix[i][j] + m.matrix[i][j];
+		return result;
+	}
 
-        Matrix result = new Matrix(numRows, numCols);
-        for (int i = 0; i < numRows; i++)
-            for (int j = 0; j < numCols; j++)
-                result.matrix[i][j] = this.matrix[i][j] + m.matrix[i][j];
-        return result;
-    }
+	/**
+	 * @return matrix result of subtracting two matrices
+	 */
+	public Matrix subtract(Matrix m) {
+		if (!haveEqualDimensions(m))
+			throw new IllegalArgumentException("Matrices cannot be subtracted.");
 
-    /**
-     * @return matrix result of subtracting two matrices
-     */
-    public Matrix subtract(Matrix m) {
-        if (!haveEqualDimensions(m))
-            throw new IllegalArgumentException("Matrices cannot be subtracted.");
+		Matrix result = new Matrix(numRows, numCols);
+		for (int i = 0; i < numRows; i++)
+			for (int j = 0; j < numCols; j++)
+				result.matrix[i][j] = this.matrix[i][j] - m.matrix[i][j];
+		return result;
+	}
 
-        Matrix result = new Matrix(numRows, numCols);
-        for (int i = 0; i < numRows; i++)
-            for (int j = 0; j < numCols; j++)
-                result.matrix[i][j] = this.matrix[i][j] - m.matrix[i][j];
-        return result;
-    }
+	/**
+	 * @param m matrix to multiply by
+	 * @return matrix result of multiplying two matrices
+	 */
+	public Matrix multiply(Matrix m) {
+		if (!checkDims(m))
+			throw new IllegalArgumentException("Matrices cannot be multiplied.");
 
-    /**
-     * @param m matrix to multiply by
-     * @return matrix result of multiplying two matrices
-     */
-    public Matrix multiply(Matrix m) {
-        if (!checkDims(m))
-            throw new IllegalArgumentException("Matrices cannot be multiplied.");
+		Matrix result = new Matrix(numRows, m.numCols);
+		for (int i = 0; i < numRows; i++)
+			for (int j = 0; j < m.numCols; j++)
+				for (int k = 0; k < numCols; k++)
+					result.matrix[i][j] += matrix[i][k] * m.matrix[k][j];
+		return result;
+	}
 
-        Matrix result = new Matrix(numRows, m.numCols);
-        for (int i = 0; i < numRows; i++)
-            for (int j = 0; j < m.numCols; j++)
-                for (int k = 0; k < numCols; k++)
-                    result.matrix[i][j] += matrix[i][k] * m.matrix[k][j];
-        return result;
-    }
-
-    /**
-     * @param scalar number to multiply every entry in matrix by
-     * @return matrix result of scalar times matrix
-     */
-    public Matrix multiply(double scalar) {
-        Matrix result = new Matrix(numRows, numCols);
-        for (int i = 0; i < numRows; i++)
-            for (int j = 0; j < numCols; j++)
-                result.matrix[i][j] = matrix[i][j] * scalar;
-        return result;
-    }
+	/**
+	 * @param scalar number to multiply every entry in matrix by
+	 * @return matrix result of scalar times matrix
+	 */
+	public Matrix multiply(double scalar) {
+		Matrix result = new Matrix(numRows, numCols);
+		for (int i = 0; i < numRows; i++)
+			for (int j = 0; j < numCols; j++)
+				result.matrix[i][j] = matrix[i][j] * scalar;
+		return result;
+	}
 
 	/**
 	 * @return dot product of two vectors
@@ -151,6 +147,11 @@ public class Matrix {
 		return x;
 	}
 
+	/**
+	 * Solves system Ax = b using Householder reflections where A is a n by n matrix and b is a n by 1 matrix
+	 * @param b vector to solve equation with
+	 * @return solution vector to system
+	 */
 	public Matrix solve_qr_b_househ(Matrix b) {
 		Matrix[] list = this.qr_fact_househ();
 		Matrix x = list[1].backwardSubstitution(list[0].transpose().multiply(b));
@@ -209,16 +210,19 @@ public class Matrix {
 		// Can QR factorization using Givens be done on non-square matrices?
 		Matrix q = null;
 		// Copy original matrix into r for row reduction and to avoid changing original matrix
-		Matrix r = new Matrix(matrix);
+		Matrix r = new Matrix(numRows, numCols);
+		for (int i = 0; i < numRows; i++)
+			System.arraycopy(matrix[i], 0, r.matrix[i], 0, numCols);
+
 		for (int j = 0; j < numCols; j++)
 			for (int i = j + 1; i < numRows; i++)
 				if (r.matrix[i][j] != 0)
 				{
 					double x = r.matrix[j][j];
 					double y = r.matrix[i][j];
-					// cos theta = x/sqrt(x^2 + y^2)
+					// cos theta = x / sqrt(x^2 + y^2)
 					double cosTheta = x / (Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2)));
-					// sin theta = -y/sqrt(x^2 + y^2)
+					// sin theta = -y / sqrt(x^2 + y^2)
 					double sinTheta = -y / (Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2)));
 					Matrix g = getIdentityMatrix(numRows);
 					g.matrix[i][i] = cosTheta;
@@ -249,33 +253,33 @@ public class Matrix {
     public Matrix[] qr_fact_househ(){
         Matrix q = null;
         // Copy original matrix into r for row reduction and to avoid changing original matrix
-        Matrix r = new Matrix(numRows, numCols);
-        for (int i = 0; i < numRows; i++)
-            System.arraycopy(matrix[i], 0, r.matrix[i], 0, numCols);
+     	Matrix r = new Matrix(numRows, numCols);
+     	for (int i = 0; i < numRows; i++)
+     		System.arraycopy(matrix[i], 0, r.matrix[i], 0, numCols);
 
-        for (int j = 0; j < numCols; j++)
-            for (int i = j + 1; i < numRows; i++)
-                if (Math.abs(r.matrix[i][j]) > 1E-15)
-                {
-                    Matrix x_n = new Matrix(numRows - j, 1);
-                    for (int k = 0, count = 0; j + k < r.numRows; k++, count++)
-                        x_n.matrix[count][0] = r.matrix[j + k][j];
-                    double x_n_norm = x_n.getNorm();
-                    x_n.matrix[0][0] -= x_n_norm;
-                    x_n_norm = x_n.getNorm();
-                    Matrix u_n = x_n.multiply(1 / x_n_norm);
-                    Matrix identity = getIdentityMatrix(u_n.numRows);
-                    Matrix rightStuff = u_n.multiply(u_n.transpose()).multiply(2);
-                    Matrix result = identity.subtract(rightStuff);
-                    Matrix padded = padH(result, getIdentityMatrix(r.numRows));
-                    r = padded.multiply(r);
-                    // Sets q equal to "H_n" the first time the loop runs, otherwise calculates q as it should
-                    if (q == null)
-                        q = padded;
-                    else
-                        q = q.multiply(padded);
-                } else
-                    r.matrix[i][j] = 0;
+		for (int j = 0; j < numCols; j++)
+			for (int i = j + 1; i < numRows; i++)
+				if (Math.abs(r.matrix[i][j]) > 1E-15)
+				{
+					Matrix x_n = new Matrix(numRows - j, 1);
+					for (int k = 0, count = 0; j + k < r.numRows; k++, count++)
+						x_n.matrix[count][0] = r.matrix[j + k][j];
+					double x_n_norm = x_n.getNorm();
+					x_n.matrix[0][0] -= x_n_norm;
+					x_n_norm = x_n.getNorm();
+					Matrix u_n = x_n.multiply(1 / x_n_norm);
+					Matrix identity = getIdentityMatrix(u_n.numRows);
+					Matrix rightStuff = u_n.multiply(u_n.transpose()).multiply(2);
+					Matrix result = identity.subtract(rightStuff);
+					Matrix padded = padH(result, getIdentityMatrix(r.numRows));
+					r = padded.multiply(r);
+					// Sets q equal to "H_n" the first time the loop runs, otherwise calculates q as it should
+					if (q == null)
+						q = padded;
+					else
+						q = q.multiply(padded);
+				} else
+					r.matrix[i][j] = 0;
 
         Matrix[] list = new Matrix[2];
         list[0] = q;
@@ -299,20 +303,6 @@ public class Matrix {
 
 
     /**
-     * For the purpose of this project, the error is described as the matrix entry with the highest absolute value
-     * @return max norm
-     */
-    public double getError() {
-        // Initialize variable with some value in matrix
-        double max = Math.abs(matrix[0][0]);
-        for (int i = 0; i < numRows; i++)
-            for (int j = 0; j < numCols; j++)
-                if (Math.abs(matrix[i][j]) > max)
-                    max = Math.abs(matrix[i][j]);
-        return max;
-    }
-
-    /**
      * Places matrix passed as parameter inside an identity matrix; used for constructing H
      * matrices in Householder reflections. The matrix will be placed in the lower right hand
      * corner of the identity matrix
@@ -321,9 +311,23 @@ public class Matrix {
     private Matrix padH(Matrix innerMatrix, Matrix identity) {
         int dimDiff = identity.numCols - innerMatrix.numCols;
         for(int i = dimDiff; i < identity.numRows; i++)
-            for (int j = dimDiff; j < identity.numCols; j++)
-                identity.matrix[i][j] = innerMatrix.matrix[i - dimDiff][j - dimDiff];
+			for (int j = dimDiff; j < identity.numCols; j++)
+				identity.matrix[i][j] = innerMatrix.matrix[i - dimDiff][j - dimDiff];
         return identity;
+    }
+
+    /**
+     * For the purpose of this project, the error is described as the matrix entry with the highest absolute value
+     * @return max norm
+     */
+    public double getError() {
+    	// Initialize variable with some value in matrix
+    	double max = Math.abs(matrix[0][0]);
+    	for (int i = 0; i < numRows; i++)
+    		for (int j = 0; j < numCols; j++)
+    			if (Math.abs(matrix[i][j]) > max)
+    				max = Math.abs(matrix[i][j]);
+    	return max;
     }
 
     /**
@@ -332,26 +336,26 @@ public class Matrix {
      * @return b vector containing entries as described above
      */
     public static Matrix getBVector(int dim) {
-        Matrix b = new Matrix(dim, 1);
-        double entry = Math.pow(.1, (double) dim / 3);
-        for (int i = 0; i < b.numRows; i++)
-            b.matrix[i][0] = entry;
-        return b;
+    	Matrix b = new Matrix(dim, 1);
+    	double entry = Math.pow(.1, (double) dim / 3);
+    	for (int i = 0; i < b.numRows; i++)
+    		b.matrix[i][0] = entry;
+    	return b;
     }
 
     /**
-     * A Hilbert matrix is a square matrix whose entries are defined as H_ij = 1 / (i + j - 1)
-     * @param dim dimension of Hilbert matrix
-     * @return Hilbert matrix represented a 2D array
-     */
-    public static Matrix getHilbertMatrix(int dim) {
-        Matrix hilbert = new Matrix(dim, dim);
-        for (int i = 0; i < dim; i++)
-            for (int j = 0; j < dim; j++)
-                // Simply adding 1 since arrays are 0 indexed
-                hilbert.matrix[i][j] = (double) 1 / (i + j + 1);
-        return hilbert;
-    }
+	 * A Hilbert matrix is a square matrix whose entries are defined as H_ij = 1 / (i + j - 1)
+	 * @param dim dimension of Hilbert matrix
+	 * @return Hilbert matrix represented a 2D array
+	 */
+	public static Matrix getHilbertMatrix(int dim) {
+		Matrix hilbert = new Matrix(dim, dim);
+		for (int i = 0; i < dim; i++)
+			for (int j = 0; j < dim; j++)
+				// Simply adding 1 since arrays are 0 indexed
+				hilbert.matrix[i][j] = (double) 1 / (i + j + 1);
+		return hilbert;
+	}
 
 	/**
 	 * An identity matrix is defined as a matrix with n rows and columns with a diagonal of 1s
@@ -365,345 +369,6 @@ public class Matrix {
 			identity.matrix[i][i] = 1;
 		return identity;
 	}
-
-    /**
-     * Generate A0
-     */
-    public Matrix getA0(){
-        Matrix A = new Matrix(this.numRows, this.numRows);
-        for(int row = 0; row < this.numRows; row++){
-            for(int col = 0; col < A.numCols; col++){
-                if(row >= col){
-                    if(row == col || row == col + 2 || row == col + 3){
-                        A.matrix[row][col] = 1.00;
-                    }
-                }
-                else{
-                    A.matrix[row][col] = 0.00;
-                }
-            }
-        }
-        return A;
-    }
-
-    /**
-     * Generate A1
-     */
-    public Matrix getA1(){
-        Matrix A1 = new Matrix(this.numRows, this.numRows);
-        for(int row = 0; row < this.numRows; row++){
-            for(int col = 0; col < A1.numCols; col++){
-                if(row >= col){
-                    if(row == col || row == col + 1 || row == col + 3){
-                        A1.matrix[row][col] = 1.00;
-                    }
-                }
-                else{
-                    A1.matrix[row][col] = 0.00;
-                }
-            }
-        }
-        return A1;
-    }
-
-    /**
-     * Generate random X stream
-     */
-    public static Matrix getXStream(int length){
-        Random rand = new Random();
-        Matrix X = new Matrix(length,1);
-        for(int i = 0; i < X.numRows; i++){
-            X.matrix[i][0] = rand.nextInt(2);
-            if(i == X.numRows - 1 || i == X.numRows - 2 || i == X.numRows - 3){
-                X.matrix[i][0] = 0;
-            }
-        }
-        return X;
-    }
-
-    /**
-     * Generate random Y stream
-     */
-    public static Matrix getYStream(int length){
-        Random rand = new Random();
-        Matrix Y = new Matrix(length,1);
-        for(int i = 0; i < Y.numRows; i++){
-            Y.matrix[i][0] = rand.nextInt(2);
-        }
-        return Y;
-    }
-
-    /**
-     * Combine Y0 and Y1
-     */
-    public static String[][] combineY(Matrix Y0, Matrix Y1){
-        String[][] result = new String[Y0.numRows][1];
-        int tempInt, tempInt2;
-        String temp,temp2, fullString;
-        for(int i = 0; i < Y0.numRows; i++){
-            tempInt = (int) Y0.matrix[i][0];
-            tempInt2 = (int) Y1.matrix[i][0];
-            temp = Integer.toString(tempInt);
-            temp2 = Integer.toString(tempInt2);
-            fullString = temp+temp2;
-            result[i][0] = (fullString);
-        }
-        return result;
-    }
-
-    /**
-     * Generate initial X0 stream
-     * @return vector with all 0's length as A and b
-     */
-    public Matrix generateInitial(){
-        Matrix result = new Matrix(this.getRows(),1);
-        for(int i = 0; i < this.getRows()-1; i++){
-            result.matrix[i][0] = 0.0;
-        }
-        return result;
-    }
-
-    /**
-     * Add 3 zero's to end of X stream
-     */
-    public Matrix addZeros(){
-        Matrix result = new Matrix(this.numRows+3,this.numCols);
-        for(int i = 0; i < numRows; i++){
-            result.matrix[i][0] = this.matrix[i][0];
-        }
-        result.matrix[result.numRows - 3][0] = 0.00;
-        result.matrix[result.numRows - 2][0] = 0.00;
-        result.matrix[result.numRows - 1][0] = 0.00;
-        return result;
-    }
-
-
-    /**
-     * Modded matrix multiplication for Convolutional Code
-     * @param m matrix to multiply by
-     * @return matrix result of multiplying two matrices % 2
-     */
-    public Matrix multiplyMod(Matrix m) {
-        if (!checkDims(m))
-            throw new IllegalArgumentException("Matrices cannot be multiplied.");
-        Matrix result = new Matrix(numRows, m.numCols);
-        for (int i = 0; i < numRows; i++)
-            for (int j = 0; j < m.numCols; j++)
-                for (int k = 0; k < numCols; k++) {
-                    result.matrix[i][j] += matrix[i][k] * m.matrix[k][j];
-                    result.matrix[i][j] = result.matrix[i][j] % 2;
-                }
-        return result;
-    }
-
-    /**
-     * Gauss-Seidel
-     * @return
-     */
-    public Matrix gauss_seidel(Matrix y, Matrix initialX, float tol){
-        boolean isBinary = false;
-        boolean error;
-        int iterations = 0;
-
-        if(isBinary(this)){
-            isBinary = true;
-        }
-
-        Matrix x_k = initialX;
-        Matrix b = y;
-        Matrix x_k_1 = initialX;
-        Matrix A = this;
-        Matrix L = A.lower();
-        Matrix U = A.upper();
-        Matrix D = A.diagonal();
-
-        while(iterations <= 100){
-            if(isBinary){
-                Matrix LHS = L.add(D);
-                Matrix negativeU = U;
-                Matrix RHS = negativeU.multiply(x_k);
-                RHS = RHS.add(b);
-                x_k_1 = LHS.forwardSubstitution(RHS);
-                error = checkError(x_k,x_k_1) < tol;
-                if(error){
-                    System.out.println("Method converges after "+iterations+" iteration(s).");
-                    return (x_k_1.finalMod());
-                }else{
-                    x_k = x_k_1;
-                }
-                iterations++;
-            }
-            else{
-                Matrix LHS = L.add(D);
-                Matrix negativeU = U.multiply(-1);
-                Matrix RHS = negativeU.multiply(x_k);
-                RHS = RHS.add(b);
-                x_k_1 = LHS.forwardSubstitution(RHS);
-                error = checkError(x_k,x_k_1) < tol;
-                if(error){
-                    System.out.println("Method converges after "+iterations+" iteration(s).");
-                    return (x_k_1);
-                }else{
-                    x_k = x_k_1;
-                }
-                iterations++;
-            }
-        }
-        System.out.println("Method DOES NOT converge after "+iterations+" iteration(s).");
-        return x_k_1;
-    }
-
-    /**
-     * Gauss-Seidel
-     * @return
-     */
-    public Matrix jacobi(Matrix y, Matrix initialX, float tol){
-        boolean isBinary = false;
-        boolean error;
-        int iterations = 0;
-
-        if(isBinary(this)){
-            isBinary = true;
-        }
-
-        Matrix x_k = initialX;
-        Matrix b = y;
-        Matrix x_k_1 = initialX;
-        Matrix A = this;
-        Matrix L = A.lower();
-        Matrix U = A.upper();
-        Matrix D = A.diagonal();
-
-        while(iterations <= 100){
-            if(isBinary){
-                Matrix LHS = D;
-                Matrix L_U = L.add(U);
-                Matrix RHS = L_U.multiply(x_k);
-                RHS = RHS.add(b);
-                x_k_1 = LHS.forwardSubstitution(RHS);
-                error = checkError(x_k,x_k_1) < tol;
-                if(error){
-                    System.out.println("Method converges after "+iterations+" iteration(s).");
-                    return (x_k_1.finalMod());
-                }else{
-                    x_k = x_k_1;
-                }
-                iterations++;
-            }
-            else{
-                Matrix LHS = L.add(D);
-                Matrix negativeU = U.multiply(-1);
-                Matrix RHS = negativeU.multiply(x_k);
-                RHS = RHS.add(b);
-                x_k_1 = LHS.forwardSubstitution(RHS);
-                error = checkError(x_k,x_k_1) < tol;
-                if(error){
-                    System.out.println("Method converges after "+iterations+" iteration(s).");
-                    return (x_k_1);
-                }else{
-                    x_k = x_k_1;
-                }
-                iterations++;
-            }
-        }
-        System.out.println("Method DOES NOT converge after "+iterations+" iteration(s).");
-        return x_k_1;
-    }
-
-    /**
-     * Check error in GS or Jacobi
-     */
-    public float checkError(Matrix x_k, Matrix x_k_1){
-        return (getFloatNorm(x_k.subtract(x_k_1)));
-    }
-
-    /**
-     * Finds a norm of a vector given as array
-     * @return norm of vector
-     */
-    public float getFloatNorm(Matrix m){
-        float result = 0;
-
-        for(int i = 0; i < m.numRows; i++) {
-            result += Math.pow(m.matrix[i][0], 2);
-        }
-        result = (float) Math.sqrt(result);
-        return result;
-    }
-
-    /**
-     * Mod after "x" iterations if Binary Matrix
-     */
-    public Matrix finalMod(){
-        Matrix result = this;
-        for(int i = 0; i < numRows; i++){
-            result.matrix[i][0] = (Math.abs(this.matrix[i][0])) % 2;
-        }
-        return result;
-    }
-
-
-    /**
-     * Check if Matrix is binary matrix
-     */
-    public static boolean isBinary(Matrix m){
-        boolean flag = true;
-        for(int i = 0; i < m.getRows(); i++){
-            for(int j = 0; j < m.getRows(); j++){
-                if(m.matrix[i][j] != 0.00 && m.matrix[i][j] != 1.00){
-                    return false;
-                }
-            }
-        }
-        return flag;
-    }
-
-    /**
-     * Get lower triangular of Matrix m
-     */
-    public Matrix lower(){
-        Matrix result = new Matrix(numRows,numCols);
-        Matrix temp = this;
-        for(int i = 1; i < numRows; i++){
-            for(int j = 0; j <= i - 1; j++){
-                result.matrix[i][j] = temp.matrix[i][j];
-            }
-        }
-        return result;
-    }
-
-    /**
-     * Get upper triangular of Matrix m
-     */
-    public Matrix upper(){
-        Matrix result = new Matrix(numRows,numCols);
-        Matrix temp = this;
-        for(int i = 0; i < numRows-1; i++){
-            for(int j = numCols-1; j >= i+1; j--){
-                result.matrix[i][j] = temp.matrix[i][j];
-            }
-        }
-        return result;
-    }
-
-    /**
-     * Get diagonal of Matrix m
-     */
-    public Matrix diagonal(){
-        Matrix result = new Matrix(numRows,numCols);
-        Matrix temp = this;
-        for(int i = 0; i < numRows; i++){
-            for(int j = 0; j < numRows; j++){
-                if(i == j){
-                    result.matrix[i][j] = temp.matrix[i][j];
-                }
-                else{
-                    result.matrix[i][j] = 0;
-                }
-            }
-        }
-        return result;
-    }
 
 	@Override
 	public String toString() {
@@ -743,5 +408,21 @@ public class Matrix {
 	 */
 	private boolean checkDims(Matrix m) {
 		return (this.numCols == m.numRows);
+	}
+
+	public int getNumRows() {
+		return numRows;
+	}
+
+	public int getNumCols() {
+		return numCols;
+	}
+
+	public double get(int i, int j) {
+		return matrix[i][j];
+	}
+
+	public void set(int i, int j, double value) {
+		matrix[i][j] = value;
 	}
 }
