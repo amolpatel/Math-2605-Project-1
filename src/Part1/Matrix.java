@@ -1,4 +1,5 @@
-
+package Part1;
+import java.util.Random;
 /**
  * Matrix class can be used to represent a matrix or vector as
  * a two dimensional array and supports various operations
@@ -152,7 +153,7 @@ public class Matrix {
 
 	public Matrix solve_qr_b_househ(Matrix b) {
 		Matrix[] list = this.qr_fact_househ();
-		Matrix x = backwardSubstitution(list[1], list[0].transpose().multiply(b));
+		Matrix x = list[1].backwardSubstitution(list[0].transpose().multiply(b));
 		return x;
 	}
 
@@ -296,50 +297,6 @@ public class Matrix {
     	return Math.sqrt(total);
     }
 
-    /**
-     * Returns correct size of e vector multiplied by norm of x in HouseHolder
-     * @return vector e
-     */
-    public Matrix getE(Matrix m){
-        Matrix e = new Matrix(new double[m.numRows][1]);
-        e.matrix[0][0] = getNorm(m);
-        return e;
-    }
-
-    /**
-     * Places matrix passed as parameter inside an identity matrix; used for constructing H
-     * matrices in Householder reflections. The matrix will be placed in the lower right hand
-     * corner of the identity matrix
-     * @return identity matrix containing vector h
-     */
-    public Matrix getV(Matrix x){
-        Matrix v;
-        Matrix e = getE(x);
-        v = e.add(x);
-        return v;
-    }
-
-    /**
-     * Returns u bar vector in Householder
-     */
-    public Matrix getU(Matrix v){
-        return v.multiply(1 / getNorm(v));
-    }
-
-    /**
-     * Finds x bar vector used in Householder
-     * @param Matrix m, index i, index j
-     * @return double array
-     */
-    public Matrix getX(Matrix m, int row, int col){
-        Matrix x = new Matrix(new double[m.numRows-row][1]);
-        int tempRow = row;
-        for(int i = row; i < numRows; i++){
-            x.matrix[i-tempRow][0] = m.matrix[row][col];
-            row++;
-        }
-        return x;
-    }
 
     /**
      * For the purpose of this project, the error is described as the matrix entry with the highest absolute value
@@ -552,7 +509,7 @@ public class Matrix {
                 Matrix negativeU = U;
                 Matrix RHS = negativeU.multiply(x_k);
                 RHS = RHS.add(b);
-                x_k_1 = forwardSubstitution(LHS,RHS);
+                x_k_1 = LHS.forwardSubstitution(RHS);
                 error = checkError(x_k,x_k_1) < tol;
                 if(error){
                     System.out.println("Method converges after "+iterations+" iteration(s).");
@@ -567,7 +524,7 @@ public class Matrix {
                 Matrix negativeU = U.multiply(-1);
                 Matrix RHS = negativeU.multiply(x_k);
                 RHS = RHS.add(b);
-                x_k_1 = forwardSubstitution(LHS,RHS);
+                x_k_1 = LHS.forwardSubstitution(RHS);
                 error = checkError(x_k,x_k_1) < tol;
                 if(error){
                     System.out.println("Method converges after "+iterations+" iteration(s).");
@@ -578,7 +535,7 @@ public class Matrix {
                 iterations++;
             }
         }
-        System.out.println("Method does not converge after "+iterations+" iteration(s).");
+        System.out.println("Method DOES NOT converge after "+iterations+" iteration(s).");
         return x_k_1;
     }
 
@@ -609,7 +566,7 @@ public class Matrix {
                 Matrix L_U = L.add(U);
                 Matrix RHS = L_U.multiply(x_k);
                 RHS = RHS.add(b);
-                x_k_1 = forwardSubstitution(LHS, RHS);
+                x_k_1 = LHS.forwardSubstitution(RHS);
                 error = checkError(x_k,x_k_1) < tol;
                 if(error){
                     System.out.println("Method converges after "+iterations+" iteration(s).");
@@ -624,7 +581,7 @@ public class Matrix {
                 Matrix negativeU = U.multiply(-1);
                 Matrix RHS = negativeU.multiply(x_k);
                 RHS = RHS.add(b);
-                x_k_1 = forwardSubstitution(LHS,RHS);
+                x_k_1 = LHS.forwardSubstitution(RHS);
                 error = checkError(x_k,x_k_1) < tol;
                 if(error){
                     System.out.println("Method converges after "+iterations+" iteration(s).");
@@ -635,7 +592,7 @@ public class Matrix {
                 iterations++;
             }
         }
-        System.out.println("Method does not converge after "+iterations+" iteration(s).");
+        System.out.println("Method DOES NOT converge after "+iterations+" iteration(s).");
         return x_k_1;
     }
 
