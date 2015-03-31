@@ -15,18 +15,20 @@ public class Part2Driver {
         System.out.println("Welcome to part 2 of the project.");
         while (true) {
             System.out.println("Select an option.");
-            System.out.println("1 - Solve Ax=b with Gauss-Seidel from file in [A|b] form.");
-            System.out.println("2 - Solve Ax=b with Jacobi from file in [A|b] form.");
-            System.out.println("3 - Generate Y0 with X stream from file.");
-            System.out.println("4 - Generate Y0 with random X stream.");
-            System.out.println("5 - Generate Y1 with X stream from file.");
-            System.out.println("6 - Generate Y1 with random X stream.");
-            System.out.println("7 - Generate full Y with X stream from file.");
-            System.out.println("8 - Generate full Y with random X stream.");
-            System.out.println("9 - Generate X with Y stream from file using Gauss-Seidel.");
-            System.out.println("10 - Generate X with random Y stream using Gauss-Seidel.");
-            System.out.println("11 - Generate X with Y stream from file using Jacobi.");
-            System.out.println("12 - Generate X with random Y stream using Jacobi.");
+            System.out.println("1 - Solve Ax=b using Gauss-Seidel in [A|b] form read from file.");
+            System.out.println("2 - Solve Ax=b using Jacobi in [A|b] form read from file.");
+            System.out.println("3 - Produce output stream Y0 with input stream X read from file.");
+            System.out.println("4 - Produce output stream Y0 with randomly generated input stream X.");
+            System.out.println("5 - Produce output stream Y1 with input stream X read from file.");
+            System.out.println("6 - Produce output stream Y1 with randomly generated input stream X.");
+            System.out.println("7 - Produce full output stream Y with input stream X read from file.");
+            System.out.println("8 - Produce full output stream Y with randomly generated input stream X.");
+            System.out.println("9 - Produce input stream X with output stream Y0 read from file using Gauss-Seidel.");
+            System.out.println("10 - Produce input stream X with output stream Y1 read from file using Gauss-Seidel.");
+            System.out.println("11 - Produce input stream X with randomly generated output stream Y using Gauss-Seidel.");
+            System.out.println("12 - Produce input stream X with output stream Y0 read from file using Jacobi.");
+            System.out.println("13 - Produce input stream X with output stream Y1 read from file using Jacobi.");
+            System.out.println("14 - Produce input stream X with randomly generated output stream Y using Jacobi.");
             input = in.nextInt();
             System.out.println("Enter file path. If a file path is not required, just enter any character to move on.");
             path = in.next();
@@ -67,14 +69,22 @@ public class Part2Driver {
                     caseNine(augmented9);
                     break;
                 case 10:
-                    caseTen();
+                    Matrix augmented10 = FileParser.parseVectorFile(path);
+                    caseTen(augmented10);
                     break;
                 case 11:
-                    Matrix augmented11 = FileParser.parseVectorFile(path);
-                    caseEleven(augmented11);
+                    caseEleven();
                     break;
                 case 12:
-                    caseTwelve();
+                    Matrix augmented12 = FileParser.parseVectorFile(path);
+                    caseTwelve(augmented12);
+                    break;
+                case 13:
+                    Matrix augmented13 = FileParser.parseVectorFile(path);
+                    caseThirteen(augmented13);
+                    break;
+                case 14:
+                    caseFourteen();
                     break;
             }
         }
@@ -102,6 +112,7 @@ public class Part2Driver {
 
     public static void caseThree(Matrix matrix) {
         Matrix X = matrix;
+        X = X.addZeros();
         System.out.println("X:\n" + X);
         Matrix A0 = X.getA0();
         Matrix Y0 = A0.multiplyMod(X);
@@ -119,6 +130,7 @@ public class Part2Driver {
 
     public static void caseFive(Matrix matrix) {
         Matrix X = matrix;
+        X = X.addZeros();
         System.out.println("X:\n" + X);
         Matrix A1 = X.getA1();
         Matrix Y1 = A1.multiplyMod(X);
@@ -136,6 +148,7 @@ public class Part2Driver {
 
     public static void caseSeven(Matrix matrix) {
         Matrix X = matrix;
+        X = X.addZeros();
         System.out.println("X:\n" + X);
         Matrix A0 = X.getA0();
         Matrix Y0 = A0.multiplyMod(X);
@@ -175,11 +188,34 @@ public class Part2Driver {
         System.out.println("X:\n" + X);
     }
 
-    public static void caseTen() {
+    public static void caseTen(Matrix matrix) {
+        Matrix Y = matrix;
+        System.out.println("Y:\n" + Y);
+        Matrix A = Y.getA1();
+        Matrix guess = Y.generateInitial();
+        float tol = (float) .000000001;
+        System.out.println("Tolerance is: "+tol);
+        Matrix X = A.gauss_seidel(Y,guess, tol);
+        System.out.println("X:\n" + X);
+    }
+
+    public static void caseEleven() {
         System.out.println("Please enter desired length of Y");
         Matrix Y = Matrix.getYStream(in.nextInt());
         System.out.println("Y:\n" + Y);
-        Matrix A = Y.getA0();
+        System.out.println("Please choose which A you would like to use:");
+        System.out.println("1 - A0");
+        System.out.println("2 - A1");
+        Matrix A =null;
+        if(in.nextInt() == 1){
+            System.out.println("Using A0:");
+            A = Y.getA0();
+            System.out.println(A);
+        }else{
+            System.out.println("Using A1:");
+            A = Y.getA1();
+            System.out.println(A);
+        }
         Matrix guess = Y.generateInitial();
         float tol = (float) .000000001;
         System.out.println("Tolerance is: "+tol);
@@ -187,7 +223,7 @@ public class Part2Driver {
         System.out.println("X:\n" + X);
     }
 
-    public static void caseEleven(Matrix matrix) {
+    public static void caseTwelve(Matrix matrix) {
         Matrix Y = matrix;
         System.out.println("Y:\n" + Y);
         Matrix A = Y.getA0();
@@ -198,15 +234,40 @@ public class Part2Driver {
         System.out.println("X:\n" + X);
     }
 
-    public static void caseTwelve() {
-        System.out.println("Please enter desired length of Y");
-        Matrix Y = Matrix.getYStream(in.nextInt());
+    public static void caseThirteen(Matrix matrix) {
+        Matrix Y = matrix;
         System.out.println("Y:\n" + Y);
-        Matrix A = Y.getA0();
+        Matrix A = Y.getA1();
         Matrix guess = Y.generateInitial();
         float tol = (float) .000000001;
         System.out.println("Tolerance is: "+tol);
         Matrix X = A.jacobi(Y, guess, tol);
         System.out.println("X:\n" + X);
     }
+
+    public static void caseFourteen() {
+        System.out.println("Please enter desired length of Y");
+        Matrix Y = Matrix.getYStream(in.nextInt());
+        System.out.println("Y:\n" + Y);
+        System.out.println("Please choose which A you would like to use:");
+        System.out.println("1 - A0");
+        System.out.println("2 - A1");
+        Matrix A =null;
+        if(in.nextInt() == 1){
+            System.out.println("Using A0:");
+            A = Y.getA0();
+            System.out.println(A);
+        }else{
+            System.out.println("Using A1:");
+            A = Y.getA1();
+            System.out.println(A);
+        }
+        Matrix guess = Y.generateInitial();
+        float tol = (float) .000000001;
+        System.out.println("Tolerance is: "+tol);
+        Matrix X = A.jacobi(Y, guess, tol);
+        System.out.println("X:\n" + X);
+    }
+
+
 }

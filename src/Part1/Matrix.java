@@ -463,6 +463,20 @@ public class Matrix {
         return result;
     }
 
+    /**
+     * Add 3 zero's to end of X stream
+     */
+    public Matrix addZeros(){
+        Matrix result = new Matrix(this.numRows+3,this.numCols);
+        for(int i = 0; i < numRows; i++){
+            result.matrix[i][0] = this.matrix[i][0];
+        }
+        result.matrix[result.numRows - 3][0] = 0.00;
+        result.matrix[result.numRows - 2][0] = 0.00;
+        result.matrix[result.numRows - 1][0] = 0.00;
+        return result;
+    }
+
 
     /**
      * Modded matrix multiplication for Convolutional Code
