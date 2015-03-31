@@ -1,5 +1,10 @@
+package Part3;
+
 import java.io.FileNotFoundException;
 import java.util.Scanner;
+
+import Part1.FileParser;
+import Part1.Matrix;
 
 public class Part3Driver {
 	public static void main(String[] args) throws FileNotFoundException {

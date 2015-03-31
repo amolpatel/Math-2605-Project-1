@@ -1,3 +1,5 @@
+package Part1;
+
 import java.io.FileNotFoundException;
 import java.util.Scanner;
 
@@ -9,18 +11,18 @@ public class Part1Driver {
     	while (true)
     	{
     		System.out.println("Select an option, or enter q to quit.");
-    		System.out.println("1 - LU decomposition using n x n matrices.");
-    		System.out.println("2 - QR factorization using Householder reflections.");
-    		System.out.println("3 - QR factorization using Givens rotations.");
-    		System.out.println("4 - Solve Ax = b using LU decomposition or QR factorization.");
-    		System.out.println("5 - Hilbert matrices from n = 2 to n = 20");
+    		System.out.println("1 - LU decomposition of n x n matrix.");
+    		System.out.println("2 - QR decomposition of n x n matrix using Householder reflections.");
+    		System.out.println("3 - QR decomposition of n x n matrix using Givens rotations.");
+    		System.out.println("4 - Solve Ax = b using LU decomposition and QR factorization (requires augmented matrix input).");
+    		System.out.println("5 - Solve Ax = b using Hilbert matrices from n = 2 to n = 20.");
     		String input = in.next();
     		int inputNum;
     		if (input.equalsIgnoreCase("q"))
     			break;
     		else
     			inputNum = Integer.parseInt(input);
-            System.out.println("Enter file path. If a file path is not required, just enter any character to move on.");
+            System.out.println("Enter file path. If option 5 was chosen, just enter any character to move on.");
             String path = in.next();
             switch (inputNum) {
             	case 1: matrix = FileParser.parseFile(path);

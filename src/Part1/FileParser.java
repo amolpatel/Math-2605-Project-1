@@ -1,3 +1,5 @@
+package Part1;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
@@ -98,9 +100,8 @@ public class FileParser {
 	Scanner file = new Scanner(new File(filePath));
         // Find dimensions of matrix rows from first line of file
    	double[][] vectorArray = new double[rowDim][1];
-	for (int i = 0; i < rowDim; i++) {
-            vectorArray[i][0] = file.nextDouble();
-	}
+	for (int i = 0; i < rowDim; i++)
+		vectorArray[i][0] = file.nextDouble();
 	file.close();
 	return vectorArray;
 
