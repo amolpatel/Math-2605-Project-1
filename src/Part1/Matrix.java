@@ -510,10 +510,7 @@ public class Matrix {
         boolean isBinary = false;
         boolean error;
         int iterations = 0;
-
-        if(isBinary(this)){
-            isBinary = true;
-        }
+        if(isBinary(this)) isBinary = true;
 
         Matrix x_k = initialX;
         Matrix b = y;
@@ -567,10 +564,7 @@ public class Matrix {
         boolean isBinary = false;
         boolean error;
         int iterations = 0;
-
-        if(isBinary(this)){
-            isBinary = true;
-        }
+        if(isBinary(this)) isBinary = true;
 
         Matrix x_k = initialX;
         Matrix b = y;

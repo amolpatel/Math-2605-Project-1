@@ -8,9 +8,9 @@ java Part2Driver
 
 The system will print options for choosing which method you would like to run.
 
-Options 1 and 2 read an augmented matrix from a file in the form [A|b] with space as delimiter between columns and return as delimiter between rows.
+Options 1 and 2 read an augmented matrix from a file in the form [A|b] with space used as a delimiter between columns and return used as a delimiter between rows.
 
-Options 3, 5, 7, 9, 10, 12, and 13 read a vector from a file in the form b horizontal or vertical with space as delimiter between columns/rows.
+Options 3, 5, 7, 9, 10, 12, and 13 read a vector from a file in the form b which is either horizontal or vertical with space used as a delimiter between columns/rows.
 
 Some of these options may ask for user input such as desired length of random input stream X/output stream Y, choice of A0/A1, as well as tolerance levels.
 

@@ -107,6 +107,13 @@ public class FileParser {
 
     }
 
+    /**
+     * Read column vector horizontally or vertically
+     * @param filePath
+     * @return matrix
+     * @throws FileNotFoundException
+     */
+
     public static Matrix parseVectorFileV2(String filePath) throws FileNotFoundException {
         Scanner file = new Scanner(new File(filePath));
         // Find dimensions of matrix rows from first line of file

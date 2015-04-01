@@ -4,7 +4,6 @@ import java.io.FileNotFoundException;
 import java.util.Scanner;
 import Part1.FileParser;
 import Part1.Matrix;
-import java.lang.*;
 
 public class Part2Driver {
     static Scanner in = new Scanner(System.in);
@@ -14,19 +13,18 @@ public class Part2Driver {
     static Matrix[] list;
 
     public static void main(String[] args) throws FileNotFoundException {
-        // Decide how to round decimals in matrix; to what extent must error be calculated?
         System.out.println("Welcome to part 2 of the project.");
         while (true) {
             System.out.println("Select an option.");
-            System.out.println("1  - Solve Ax=b using Gauss-Seidel in [A|b] form read from file.");
-            System.out.println("2  - Solve Ax=b using Jacobi in [A|b] form read from file.");
-            System.out.println("3  - Produce output stream Y0 with input stream X read from file.");
-            System.out.println("4  - Produce output stream Y0 with randomly generated input stream X.");
-            System.out.println("5  - Produce output stream Y1 with input stream X read from file.");
-            System.out.println("6  - Produce output stream Y1 with randomly generated input stream X.");
-            System.out.println("7  - Produce full output stream Y with input stream X read from file.");
-            System.out.println("8  - Produce full output stream Y with randomly generated input stream X.");
-            System.out.println("9  - Produce input stream X with output stream Y0 read from file using Gauss-Seidel.");
+            System.out.println(" 1 - Solve Ax=b using Gauss-Seidel in [A|b] form read from file.");
+            System.out.println(" 2 - Solve Ax=b using Jacobi in [A|b] form read from file.");
+            System.out.println(" 3 - Produce output stream Y0 with input stream X read from file.");
+            System.out.println(" 4 - Produce output stream Y0 with randomly generated input stream X.");
+            System.out.println(" 5 - Produce output stream Y1 with input stream X read from file.");
+            System.out.println(" 6 - Produce output stream Y1 with randomly generated input stream X.");
+            System.out.println(" 7 - Produce full output stream Y with input stream X read from file.");
+            System.out.println(" 8 - Produce full output stream Y with randomly generated input stream X.");
+            System.out.println(" 9 - Produce input stream X with output stream Y0 read from file using Gauss-Seidel.");
             System.out.println("10 - Produce input stream X with output stream Y1 read from file using Gauss-Seidel.");
             System.out.println("11 - Produce input stream X with randomly generated output stream Y using Gauss-Seidel.");
             System.out.println("12 - Produce input stream X with output stream Y0 read from file using Jacobi.");
@@ -35,11 +33,12 @@ public class Part2Driver {
             System.out.println("To quit, enter 0");
             input = in.nextInt();
             if(input == 0){
+                System.out.println("Bye!");
                 break;
             }
             switch (input) {
                 case 1:
-                    System.out.println("Enter file path. If a file path is not required, just enter any character to move on.");
+                    System.out.println("Enter file path.");
                     path = in.next();
                     Matrix[] augmented = FileParser.parseFileWithB(path);
                     System.out.println("Your input:");
@@ -48,7 +47,7 @@ public class Part2Driver {
                     caseOne(augmented);
                     break;
                 case 2:
-                    System.out.println("Enter file path. If a file path is not required, just enter any character to move on.");
+                    System.out.println("Enter file path.");
                     path = in.next();
                     Matrix[] augmented2 = FileParser.parseFileWithB(path);
                     System.out.println("Your input:");
@@ -57,7 +56,7 @@ public class Part2Driver {
                     caseTwo(augmented2);
                     break;
                 case 3:
-                    System.out.println("Enter file path. If a file path is not required, just enter any character to move on.");
+                    System.out.println("Enter file path.");
                     path = in.next();
                     Matrix augmented3 = FileParser.parseVectorFileV2(path);
                     System.out.println("Your input:");
@@ -68,7 +67,7 @@ public class Part2Driver {
                     caseFour();
                     break;
                 case 5:
-                    System.out.println("Enter file path. If a file path is not required, just enter any character to move on.");
+                    System.out.println("Enter file path.");
                     path = in.next();
                     Matrix augmented5 = FileParser.parseVectorFileV2(path);
                     System.out.println("Your input:");
@@ -79,7 +78,7 @@ public class Part2Driver {
                     caseSix();
                     break;
                 case 7:
-                    System.out.println("Enter file path. If a file path is not required, just enter any character to move on.");
+                    System.out.println("Enter file path.");
                     path = in.next();
                     Matrix augmented7 = FileParser.parseVectorFileV2(path);
                     System.out.println("Your input:");
@@ -90,7 +89,7 @@ public class Part2Driver {
                     caseEight();
                     break;
                 case 9:
-                    System.out.println("Enter file path. If a file path is not required, just enter any character to move on.");
+                    System.out.println("Enter file path.");
                     path = in.next();
                     Matrix augmented9 = FileParser.parseVectorFileV2(path);
                     System.out.println("Your input:");
@@ -98,7 +97,7 @@ public class Part2Driver {
                     caseNine(augmented9);
                     break;
                 case 10:
-                    System.out.println("Enter file path. If a file path is not required, just enter any character to move on.");
+                    System.out.println("Enter file path.");
                     path = in.next();
                     Matrix augmented10 = FileParser.parseVectorFileV2(path);
                     System.out.println("Your input:");
@@ -109,7 +108,7 @@ public class Part2Driver {
                     caseEleven();
                     break;
                 case 12:
-                    System.out.println("Enter file path. If a file path is not required, just enter any character to move on.");
+                    System.out.println("Enter file path.");
                     path = in.next();
                     Matrix augmented12 = FileParser.parseVectorFileV2(path);
                     System.out.println("Your input:");
@@ -117,7 +116,7 @@ public class Part2Driver {
                     caseTwelve(augmented12);
                     break;
                 case 13:
-                    System.out.println("Enter file path. If a file path is not required, just enter any character to move on.");
+                    System.out.println("Enter file path.");
                     path = in.next();
                     Matrix augmented13 = FileParser.parseVectorFileV2(path);
                     System.out.println("Your input:");
