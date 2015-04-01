@@ -114,7 +114,7 @@ public class Part1Driver {
 			Matrix[] lu = H.lu_fact();
 			Matrix difference = (lu[0].multiply(lu[1])).subtract(H);
 			System.out.println(difference.getError());
-			System.out.println("Erorr in ||Hx - b||:");
+			System.out.println("Error in ||Hx - b||:");
 			difference = (H.multiply(x)).subtract(b);
 			System.out.println(difference.getError() + "\n");
 
@@ -125,20 +125,18 @@ public class Part1Driver {
 			Matrix[] qr = H.qr_fact_househ();
 			difference = (qr[0].multiply(qr[1])).subtract(H);
 			System.out.println(difference.getError());
-			System.out.println("Erorr in ||Hx - b||:");
+			System.out.println("Error in ||Hx - b||:");
 			difference = (H.multiply(x)).subtract(b);
 			System.out.println(difference.getError() + "\n");
 
 			System.out.println("Solution to Hx = b using QR decomposition via Givens rotations:");
 			x = H.solve_qr_b_givens(b);
 			System.out.println(x);
-
 			System.out.println("Error in ||QR - H||_inf:");
 			qr = H.qr_fact_givens();
 			difference = (qr[0].multiply(qr[1])).subtract(H);
 			System.out.println(difference.getError());
-
-			System.out.println("Erorr in ||Hx - b||:");
+			System.out.println("Error in ||Hx - b||:");
 			difference = (H.multiply(x)).subtract(b);
 			System.out.println(difference.getError() + "\n");
 		}

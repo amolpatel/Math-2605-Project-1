@@ -261,7 +261,7 @@ public class Matrix {
 
 		for (int j = 0; j < numCols; j++)
 			for (int i = j + 1; i < numRows; i++)
-				if (Math.abs(r.matrix[i][j]) > 1E-15)
+				if (r.matrix[i][j] != 0)
 				{
 					Matrix x_n = new Matrix(numRows - j, 1);
 					for (int k = 0, count = 0; j + k < r.numRows; k++, count++)
@@ -377,18 +377,13 @@ public class Matrix {
      */
     public Matrix getA0(){
         Matrix A = new Matrix(this.numRows, this.numRows);
-        for(int row = 0; row < this.numRows; row++){
-            for(int col = 0; col < A.numCols; col++){
-                if(row >= col){
-                    if(row == col || row == col + 2 || row == col + 3){
-                        A.matrix[row][col] = 1.00;
-                    }
-                }
-                else{
-                    A.matrix[row][col] = 0.00;
-                }
-            }
-        }
+        for(int row = 0; row < this.numRows; row++)
+			for(int col = 0; col < A.numCols; col++)
+				if(row >= col){
+                    if(row == col || row == col + 2 || row == col + 3)
+						A.matrix[row][col] = 1.00;
+                } else
+					A.matrix[row][col] = 0.00;
         return A;
     }
 
@@ -397,18 +392,13 @@ public class Matrix {
      */
     public Matrix getA1(){
         Matrix A1 = new Matrix(this.numRows, this.numRows);
-        for(int row = 0; row < this.numRows; row++){
-            for(int col = 0; col < A1.numCols; col++){
-                if(row >= col){
-                    if(row == col || row == col + 1 || row == col + 3){
-                        A1.matrix[row][col] = 1.00;
-                    }
-                }
-                else{
-                    A1.matrix[row][col] = 0.00;
-                }
-            }
-        }
+        for(int row = 0; row < this.numRows; row++)
+			for(int col = 0; col < A1.numCols; col++)
+				if(row >= col){
+                    if(row == col || row == col + 1 || row == col + 3)
+						A1.matrix[row][col] = 1.00;
+                } else
+					A1.matrix[row][col] = 0.00;
         return A1;
     }
 
@@ -420,9 +410,8 @@ public class Matrix {
         Matrix X = new Matrix(length,1);
         for(int i = 0; i < X.numRows; i++){
             X.matrix[i][0] = rand.nextInt(2);
-            if(i == X.numRows - 1 || i == X.numRows - 2 || i == X.numRows - 3){
-                X.matrix[i][0] = 0;
-            }
+            if(i == X.numRows - 1 || i == X.numRows - 2 || i == X.numRows - 3)
+				X.matrix[i][0] = 0;
         }
         return X;
     }
@@ -433,9 +422,8 @@ public class Matrix {
     public static Matrix getYStream(int length){
         Random rand = new Random();
         Matrix Y = new Matrix(length,1);
-        for(int i = 0; i < Y.numRows; i++){
-            Y.matrix[i][0] = rand.nextInt(2);
-        }
+        for(int i = 0; i < Y.numRows; i++)
+			Y.matrix[i][0] = rand.nextInt(2);
         return Y;
     }
 
@@ -463,9 +451,8 @@ public class Matrix {
      */
     public Matrix generateInitial(){
         Matrix result = new Matrix(this.getNumRows(),1);
-        for(int i = 0; i < this.getNumRows()-1; i++){
-            result.matrix[i][0] = 0.0;
-        }
+        for(int i = 0; i < this.getNumRows()-1; i++)
+			result.matrix[i][0] = 0.0;
         return result;
     }
 
@@ -474,9 +461,8 @@ public class Matrix {
      */
     public Matrix addZeros(){
         Matrix result = new Matrix(this.numRows+3,this.numCols);
-        for(int i = 0; i < numRows; i++){
-            result.matrix[i][0] = this.matrix[i][0];
-        }
+        for(int i = 0; i < numRows; i++)
+			result.matrix[i][0] = this.matrix[i][0];
         result.matrix[result.numRows - 3][0] = 0.00;
         result.matrix[result.numRows - 2][0] = 0.00;
         result.matrix[result.numRows - 1][0] = 0.00;
@@ -520,8 +506,8 @@ public class Matrix {
         Matrix U = A.upper();
         Matrix D = A.diagonal();
 
-        while(iterations <= 100){
-            if(isBinary){
+        while(iterations <= 100)
+			if(isBinary){
                 Matrix LHS = L.add(D);
                 Matrix negativeU = U;
                 Matrix RHS = negativeU.multiply(x_k);
@@ -531,9 +517,8 @@ public class Matrix {
                 if(error){
                     System.out.println("Gauss-Seidel method converges after "+iterations+" iteration(s).");
                     return (x_k_1.finalMod());
-                }else{
-                    x_k = x_k_1;
-                }
+                } else
+					x_k = x_k_1;
                 iterations++;
             }
             else{
@@ -546,13 +531,13 @@ public class Matrix {
                 if(error){
                     System.out.println("Gauss-Seidel method converges after "+iterations+" iteration(s).");
                     return (x_k_1);
-                }else{
-                    x_k = x_k_1;
-                }
+                } else
+					x_k = x_k_1;
                 iterations++;
             }
         }
         System.out.println("Gauss-Seidel method DOES NOT converge after "+iterations+" iteration(s).");
+        System.out.println("Method DOES NOT converge after "+iterations+" iteration(s).");
         return x_k_1;
     }
 
@@ -574,8 +559,8 @@ public class Matrix {
         Matrix U = A.upper();
         Matrix D = A.diagonal();
 
-        while(iterations <= 100){
-            if(isBinary){
+        while(iterations <= 100)
+			if(isBinary){
                 Matrix LHS = D;
                 Matrix L_U = L.add(U);
                 Matrix RHS = L_U.multiply(x_k);
@@ -585,9 +570,8 @@ public class Matrix {
                 if(error){
                     System.out.println("Jacobi method converges after "+iterations+" iteration(s).");
                     return (x_k_1.finalMod());
-                }else{
-                    x_k = x_k_1;
-                }
+                } else
+					x_k = x_k_1;
                 iterations++;
             }
             else{
@@ -601,9 +585,8 @@ public class Matrix {
                 if(error){
                     System.out.println("Jacobi method converges after "+iterations+" iteration(s).");
                     return (x_k_1);
-                }else{
-                    x_k = x_k_1;
-                }
+                } else
+					x_k = x_k_1;
                 iterations++;
             }
         }
@@ -625,9 +608,8 @@ public class Matrix {
     public float getFloatNorm(Matrix m){
         float result = 0;
 
-        for(int i = 0; i < m.numRows; i++) {
-            result += Math.pow(m.matrix[i][0], 2);
-        }
+        for(int i = 0; i < m.numRows; i++)
+			result += Math.pow(m.matrix[i][0], 2);
         result = (float) Math.sqrt(result);
         return result;
     }
@@ -637,9 +619,8 @@ public class Matrix {
      */
     public Matrix finalMod(){
         Matrix result = this;
-        for(int i = 0; i < numRows; i++){
-            result.matrix[i][0] = (Math.abs(this.matrix[i][0])) % 2;
-        }
+        for(int i = 0; i < numRows; i++)
+			result.matrix[i][0] = (Math.abs(this.matrix[i][0])) % 2;
         return result;
     }
 
@@ -649,13 +630,10 @@ public class Matrix {
      */
     public static boolean isBinary(Matrix m){
         boolean flag = true;
-        for(int i = 0; i < m.getNumRows(); i++){
-            for(int j = 0; j < m.getNumRows(); j++){
-                if(m.matrix[i][j] != 0.00 && m.matrix[i][j] != 1.00){
-                    return false;
-                }
-            }
-        }
+        for(int i = 0; i < m.getNumRows(); i++)
+			for(int j = 0; j < m.getNumRows(); j++)
+				if(m.matrix[i][j] != 0.00 && m.matrix[i][j] != 1.00)
+					return false;
         return flag;
     }
 
@@ -665,11 +643,9 @@ public class Matrix {
     public Matrix lower(){
         Matrix result = new Matrix(numRows,numCols);
         Matrix temp = this;
-        for(int i = 1; i < numRows; i++){
-            for(int j = 0; j <= i - 1; j++){
-                result.matrix[i][j] = temp.matrix[i][j];
-            }
-        }
+        for(int i = 1; i < numRows; i++)
+			for(int j = 0; j <= i - 1; j++)
+				result.matrix[i][j] = temp.matrix[i][j];
         return result;
     }
 
@@ -679,11 +655,9 @@ public class Matrix {
     public Matrix upper(){
         Matrix result = new Matrix(numRows,numCols);
         Matrix temp = this;
-        for(int i = 0; i < numRows-1; i++){
-            for(int j = numCols-1; j >= i+1; j--){
-                result.matrix[i][j] = temp.matrix[i][j];
-            }
-        }
+        for(int i = 0; i < numRows-1; i++)
+			for(int j = numCols-1; j >= i+1; j--)
+				result.matrix[i][j] = temp.matrix[i][j];
         return result;
     }
 
@@ -693,16 +667,12 @@ public class Matrix {
     public Matrix diagonal(){
         Matrix result = new Matrix(numRows,numCols);
         Matrix temp = this;
-        for(int i = 0; i < numRows; i++){
-            for(int j = 0; j < numRows; j++){
-                if(i == j){
-                    result.matrix[i][j] = temp.matrix[i][j];
-                }
-                else{
-                    result.matrix[i][j] = 0;
-                }
-            }
-        }
+        for(int i = 0; i < numRows; i++)
+			for(int j = 0; j < numRows; j++)
+				if(i == j)
+					result.matrix[i][j] = temp.matrix[i][j];
+				else
+					result.matrix[i][j] = 0;
         return result;
     }
 
