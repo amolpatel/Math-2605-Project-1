@@ -8,15 +8,28 @@ java Part2Driver
 
 The system will print options for choosing which method you would like to run.
 
+** PLEASE READ CAREFULLY **
+
 Options 1 and 2 read an augmented matrix from a file in the form [A|b] with space used as a delimiter between columns and return used as a delimiter between rows.
 
-Options 3, 5, 7, 9, 10, 12, and 13 read a vector from a file in the form b which is either horizontal or vertical with space used as a delimiter between columns/rows.
+Options 3, 5, 7, 9, 10, 13, and 14 read a vector b from a file in the following form which is either a horizontal/vertical row/column with space/return used as a delimiter:
+1
+0
+1   OR  1 0 1 0 1
+0
+1
 
-Some of these options may ask for user input such as desired length of random input stream X/output stream Y, choice of A0/A1, as well as tolerance levels.
+Options 11 and 15 read a full Y output stream vector in the following form which is a VERTICAL matrix with a space between each column:
+For example, Y = (10, 01, 01, 10, 10, 01) should be written as:
+1 0
+0 1
+0 1
+1 0
+1 0
+0 1
 
-When trying to decode y_bar to obtain x_bar, run option 9 for Y0 and option 10 for Y1 to get a result using Gauss-Seidel.
+Some of the options may ask for user input such as desired length of random input stream X/output stream Y, choice of A0/A1, as well as tolerance levels.
 
-When trying to decode y_bar to obtain x_bar, run option 9 for Y0 and option 10 for Y1 to get a result using Jacobi.
 
 Included in this folder are a PDF and Word document of the written component associated with part 2 (included both in case one is easier to read).
 

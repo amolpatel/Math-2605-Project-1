@@ -529,7 +529,7 @@ public class Matrix {
                 x_k_1 = LHS.forwardSubstitution(RHS);
                 error = checkError(x_k,x_k_1) < tol;
                 if(error){
-                    System.out.println("Method converges after "+iterations+" iteration(s).");
+                    System.out.println("Gauss-Seidel method converges after "+iterations+" iteration(s).");
                     return (x_k_1.finalMod());
                 }else{
                     x_k = x_k_1;
@@ -544,7 +544,7 @@ public class Matrix {
                 x_k_1 = LHS.forwardSubstitution(RHS);
                 error = checkError(x_k,x_k_1) < tol;
                 if(error){
-                    System.out.println("Method converges after "+iterations+" iteration(s).");
+                    System.out.println("Gauss-Seidel method converges after "+iterations+" iteration(s).");
                     return (x_k_1);
                 }else{
                     x_k = x_k_1;
@@ -552,7 +552,7 @@ public class Matrix {
                 iterations++;
             }
         }
-        System.out.println("Method DOES NOT converge after "+iterations+" iteration(s).");
+        System.out.println("Gauss-Seidel method DOES NOT converge after "+iterations+" iteration(s).");
         return x_k_1;
     }
 
@@ -583,7 +583,7 @@ public class Matrix {
                 x_k_1 = LHS.forwardSubstitution(RHS);
                 error = checkError(x_k,x_k_1) < tol;
                 if(error){
-                    System.out.println("Method converges after "+iterations+" iteration(s).");
+                    System.out.println("Jacobi method converges after "+iterations+" iteration(s).");
                     return (x_k_1.finalMod());
                 }else{
                     x_k = x_k_1;
@@ -599,7 +599,7 @@ public class Matrix {
                 x_k_1 = LHS.forwardSubstitution(RHS);
                 error = checkError(x_k,x_k_1) < tol;;
                 if(error){
-                    System.out.println("Method converges after "+iterations+" iteration(s).");
+                    System.out.println("Jacobi method converges after "+iterations+" iteration(s).");
                     return (x_k_1);
                 }else{
                     x_k = x_k_1;
@@ -607,7 +607,7 @@ public class Matrix {
                 iterations++;
             }
         }
-        System.out.println("Method DOES NOT converge after "+iterations+" iteration(s).");
+        System.out.println("Jacobi method DOES NOT converge after "+iterations+" iteration(s).");
         return x_k_1;
     }
 

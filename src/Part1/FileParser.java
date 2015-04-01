@@ -116,7 +116,6 @@ public class FileParser {
 
     public static Matrix parseVectorFileV2(String filePath) throws FileNotFoundException {
         Scanner file = new Scanner(new File(filePath));
-        // Find dimensions of matrix rows from first line of file
         int rowDim = 0;
         double temp;
 
@@ -133,6 +132,36 @@ public class FileParser {
         file.close();
         return (new Matrix (vectorArray));
 
+    }
+
+    /**
+     * Split Y into Y0 and Y1
+     */
+    public static Matrix[] splitY(String filePath) throws FileNotFoundException {
+        Scanner file = new Scanner(new File(filePath));
+        int rowDim = 0;
+        double temp;
+
+        while(file.hasNextDouble()){
+            temp = file.nextDouble();
+            rowDim++;
+        }
+        rowDim= rowDim/2;
+        file.close();
+        double[][] Y0 = new double[rowDim][1];
+        double[][] Y1 = new double[rowDim][1];
+        file = new Scanner(new File(filePath));
+
+        for (int i = 0; i < rowDim; i++) {
+            Y0[i][0] = file.nextDouble();
+            Y1[i][0] = file.nextDouble();
+        }
+        file.close();
+        Matrix[] list = new Matrix[2];
+        list[0] = new Matrix(Y0);
+        list[1] = new Matrix(Y1);
+
+        return (list);
     }
 
 
