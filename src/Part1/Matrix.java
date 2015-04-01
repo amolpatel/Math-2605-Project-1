@@ -506,7 +506,7 @@ public class Matrix {
         Matrix U = A.upper();
         Matrix D = A.diagonal();
 
-        while(iterations <= 100){
+        while(iterations <= 100)
 			if(isBinary){
                 Matrix LHS = L.add(D);
                 Matrix negativeU = U;
@@ -535,7 +535,6 @@ public class Matrix {
 					x_k = x_k_1;
                 iterations++;
             }
-        }
         System.out.println("Gauss-Seidel method DOES NOT converge after "+iterations+" iteration(s).");
         System.out.println("Method DOES NOT converge after "+iterations+" iteration(s).");
         return x_k_1;
@@ -559,7 +558,7 @@ public class Matrix {
         Matrix U = A.upper();
         Matrix D = A.diagonal();
 
-        while(iterations <= 100){
+        while(iterations <= 100)
 			if(isBinary){
                 Matrix LHS = D;
                 Matrix L_U = L.add(U);
@@ -589,7 +588,6 @@ public class Matrix {
 					x_k = x_k_1;
                 iterations++;
             }
-        }
         System.out.println("Jacobi method DOES NOT converge after "+iterations+" iteration(s).");
         return x_k_1;
     }

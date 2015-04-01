@@ -1,10 +1,11 @@
 To compile and run the code for part 2, please ensure a recent version of Java is installed on your computer.
 
+Navigate to the directory src/Part1.
 After that, the code can be compiled via the following command:
-javac Part2Driver.java
+javac -cp ../ Part2Driver.java
 
 That will create the necessary .class files, and the code can then be run with the command:
-java Part2Driver
+java -cp ../ Part2/Part2Driver
 
 The system will print options for choosing which method you would like to run.
 

@@ -2,6 +2,7 @@ package Part2;
 
 import java.io.FileNotFoundException;
 import java.util.Scanner;
+
 import Part1.FileParser;
 import Part1.Matrix;
 
@@ -162,7 +163,7 @@ public class Part2Driver {
         int answer = in.nextInt();
         if(answer == 1){
             System.out.println("Please enter tolerance in form: '.xxxxxxxx'");
-            tol = (float) in.nextFloat();
+            tol = in.nextFloat();
         }
         System.out.println("Tolerance is: "+tol);
         Matrix result = A.gauss_seidel(b, X, tol);
@@ -180,7 +181,7 @@ public class Part2Driver {
         int answer = in.nextInt();
         if(answer == 1){
             System.out.println("Please enter tolerance in form: '.xxxxxxxx'");
-            tol = (float) in.nextFloat();
+            tol = in.nextFloat();
         }
         System.out.println("Tolerance is: "+tol);
         Matrix result = A.jacobi(b, X, tol);
@@ -233,9 +234,8 @@ public class Part2Driver {
         Matrix Y1 = A1.multiplyMod(X);
         String[][] result = Matrix.combineY(Y0, Y1);
         System.out.println("Y:");
-        for(int i = 0; i < result.length; i++){
-            System.out.println(result[i][0]);
-        }
+        for(int i = 0; i < result.length; i++)
+			System.out.println(result[i][0]);
         System.out.println("");
         System.out.println("Y0:\n"+Y0);
         System.out.println("Y1:\n"+Y1);
@@ -251,9 +251,8 @@ public class Part2Driver {
         Matrix Y1 = A1.multiplyMod(X);
         String[][] result = Matrix.combineY(Y0, Y1);
         System.out.println("Y:");
-        for(int i = 0; i < result.length; i++){
-            System.out.println(result[i][0]);
-        }
+        for(int i = 0; i < result.length; i++)
+			System.out.println(result[i][0]);
         System.out.println("Y0:\n"+Y0);
         System.out.println("Y1:\n"+Y1);
     }
@@ -270,7 +269,7 @@ public class Part2Driver {
         int answer = in.nextInt();
         if(answer == 1){
             System.out.println("Please enter tolerance in form: '.xxxxxxxx'");
-            tol = (float) in.nextFloat();
+            tol = in.nextFloat();
         }
         System.out.println("Tolerance is: "+tol);
         Matrix X = A.gauss_seidel(Y,guess, tol);
@@ -289,7 +288,7 @@ public class Part2Driver {
         int answer = in.nextInt();
         if(answer == 1){
             System.out.println("Please enter tolerance in form: '.xxxxxxxx'");
-            tol = (float) in.nextFloat();
+            tol = in.nextFloat();
         }
         System.out.println("Tolerance is: "+tol);
         Matrix X = A.gauss_seidel(Y,guess, tol);
@@ -309,7 +308,7 @@ public class Part2Driver {
         int answer = in.nextInt();
         if(answer == 1){
             System.out.println("Please enter tolerance in form: '.xxxxxxxx'");
-            tol = (float) in.nextFloat();
+            tol = in.nextFloat();
         }
         System.out.println("Tolerance is: "+tol);
         Matrix X = A0.gauss_seidel(Y0,guess, tol);
@@ -343,7 +342,7 @@ public class Part2Driver {
         int answer = in.nextInt();
         if(answer == 1){
             System.out.println("Please enter tolerance in form: '.xxxxxxxx'");
-            tol = (float) in.nextFloat();
+            tol = in.nextFloat();
         }
         System.out.println("Tolerance is: "+tol);
         Matrix X = A.gauss_seidel(Y, guess, tol);
@@ -362,7 +361,7 @@ public class Part2Driver {
         int answer = in.nextInt();
         if(answer == 1){
             System.out.println("Please enter tolerance in form: '.xxxxxxxx'");
-            tol = (float) in.nextFloat();
+            tol = in.nextFloat();
         }
         System.out.println("Tolerance is: "+tol);
         Matrix X = A.jacobi(Y, guess, tol);
@@ -381,7 +380,7 @@ public class Part2Driver {
         int answer = in.nextInt();
         if(answer == 1){
             System.out.println("Please enter tolerance in form: '.xxxxxxxx'");
-            tol = (float) in.nextFloat();
+            tol = in.nextFloat();
         }
         System.out.println("Tolerance is: "+tol);
         Matrix X = A.jacobi(Y, guess, tol);
@@ -401,7 +400,7 @@ public class Part2Driver {
         int answer = in.nextInt();
         if(answer == 1){
             System.out.println("Please enter tolerance in form: '.xxxxxxxx'");
-            tol = (float) in.nextFloat();
+            tol = in.nextFloat();
         }
         System.out.println("Tolerance is: "+tol);
         Matrix X = A0.jacobi(Y0,guess, tol);
@@ -435,7 +434,7 @@ public class Part2Driver {
         int answer = in.nextInt();
         if(answer == 1){
             System.out.println("Please enter tolerance in form: '.xxxxxxxx'");
-            tol = (float) in.nextFloat();
+            tol = in.nextFloat();
         }
         System.out.println("Tolerance is: "+tol);
         Matrix X = A.jacobi(Y, guess, tol);

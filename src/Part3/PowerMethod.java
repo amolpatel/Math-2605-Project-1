@@ -9,7 +9,6 @@ import Part1.Matrix;
  */
 
 public class PowerMethod extends Matrix {
-
 	private Matrix vectorNorm;
 	private double tol;
 	private Matrix matrixA;

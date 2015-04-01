@@ -126,9 +126,8 @@ public class FileParser {
         file.close();
         double[][] vectorArray = new double[rowDim][1];
         file = new Scanner(new File(filePath));
-        for (int i = 0; i < rowDim; i++) {
-            vectorArray[i][0] = file.nextDouble();
-        }
+        for (int i = 0; i < rowDim; i++)
+			vectorArray[i][0] = file.nextDouble();
         file.close();
         return (new Matrix (vectorArray));
 
