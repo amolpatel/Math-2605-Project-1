@@ -506,7 +506,7 @@ public class Matrix {
         Matrix U = A.upper();
         Matrix D = A.diagonal();
 
-        while(iterations <= 100)
+        while(iterations <= 100){
 			if(isBinary){
                 Matrix LHS = L.add(D);
                 Matrix negativeU = U;
@@ -559,7 +559,7 @@ public class Matrix {
         Matrix U = A.upper();
         Matrix D = A.diagonal();
 
-        while(iterations <= 100)
+        while(iterations <= 100){
 			if(isBinary){
                 Matrix LHS = D;
                 Matrix L_U = L.add(U);

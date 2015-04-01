@@ -135,6 +135,15 @@ public class Part2Driver {
                     System.out.println(augmented13);
                     caseFourteen(augmented13);
                     break;
+                case 15:
+                    System.out.println("Enter file path.");
+                    path = in.next();
+                    Matrix[] augmented15 = FileParser.splitY(path);
+                    System.out.println("Your input:");
+                    System.out.println("Y0:\n" + augmented15[0]);
+                    System.out.println("Y1:\n" + augmented15[1]);
+                    caseEleven(augmented15);
+                    break;
                 case 16:
                     caseSixteen();
                     break;
@@ -377,6 +386,28 @@ public class Part2Driver {
         System.out.println("Tolerance is: "+tol);
         Matrix X = A.jacobi(Y, guess, tol);
         System.out.println("X:\n" + X);
+    }
+
+    public static void caseFifteen(Matrix[] matrix) {
+        Matrix Y0 = matrix[0];
+        Matrix Y1 = matrix[1];
+        Matrix A0 = Y0.getA0();
+        Matrix A1 = Y1.getA1();
+        Matrix guess = Y0.generateInitial();
+        System.out.println("Please select an option for tolerance:");
+        System.out.println("1 - Use custom");
+        System.out.println("2 - Use default (.000000001)");
+        float tol = (float) .000000001;
+        int answer = in.nextInt();
+        if(answer == 1){
+            System.out.println("Please enter tolerance in form: '.xxxxxxxx'");
+            tol = (float) in.nextFloat();
+        }
+        System.out.println("Tolerance is: "+tol);
+        Matrix X = A0.jacobi(Y0,guess, tol);
+        System.out.println("X with Y0:\n" + X);
+        X = A1.jacobi(Y1,guess, tol);
+        System.out.println("X with Y1:\n" + X);
     }
 
     public static void caseSixteen() {
