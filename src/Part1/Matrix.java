@@ -372,6 +372,9 @@ public class Matrix {
 		return identity;
 	}
 
+
+
+/***************************************** Code for part 2 begins below *****************************************/
     /**
      * Generate A0
      */
@@ -674,6 +677,7 @@ public class Matrix {
         return result;
     }
 
+/************************************** Helper methods for part 1 and part 2 are below **************************************/
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
