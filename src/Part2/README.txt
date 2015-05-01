@@ -34,4 +34,4 @@ Some of the options may ask for user input such as desired length of random inpu
 
 Included in this folder are a PDF and Word document of the written component associated with part 2 (included both in case one is easier to read).
 
-** All code for Part 3 is located within Matrix.java **
+** All code for Part 2 is located within Matrix.java in Part 1**
